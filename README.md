@@ -8,7 +8,7 @@ An artistic anatomy reference website for illustrators and drawing learners.
 Browse common mammals by walking posture — plantigrade, digitigrade, and unguligrade —
 with skeleton diagrams, multi-angle photos, and an interactive skeleton overlay tool.
 
-🌐 
+🌐 [Demo](https://wildsketch.vercel.app)
 
 ---
 
