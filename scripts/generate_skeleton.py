@@ -42,17 +42,20 @@ def generate_skeleton_image(animal, angle, output_path, api_key=None):
 
     # 1. 根據視角決定 Prompt 與 aspect_ratio
     angle = angle.lower()
+    animal_cap = animal.strip().title()
+    anatomy_family = f"a {animal.strip().lower()}"
+
     if angle == "front":
-        prompt = f"Scientific anatomical front-view skeleton of a {animal} in a standing pose. Charcoal pencil sketch, highly detailed medical drawing, bones clearly defined, clean skeleton structure, solid pure white background, isolated, high contrast, black lines only."
+        prompt = f"Anatomical front-view skeleton of a {animal_cap} in sitting/standing pose. Clean charcoal pencil sketch, medical drawing, precise {anatomy_family} bone structure, clean skeleton structure with a faint translucent outer body contour outline of the {animal_cap} showing bone-to-body relationship, labeled with clean, legible English text pointers identifying major joints and bone groups (Skull, Spine, Shoulder, Rib Cage, Elbow, Radius, Ulna, Wrist, Carpals, Metacarpals, Phalanges, Pelvis, Femur, Patella, Knee, Tibia, Fibula, Hocks, Toes) exactly in the style of a drawing textbook guide, solid pure white background, isolated, high contrast, black lines only."
         aspect_ratio = "1:1"
     elif angle == "side":
-        prompt = f"Anatomical side profile skeleton of a {animal} facing left, standing pose. Clean charcoal pencil sketch, medical drawing, precise bone structure, solid pure white background, isolated, black lines only."
+        prompt = f"Anatomical side profile skeleton of a {animal_cap} facing left, standing pose. Clean charcoal pencil sketch, medical drawing, precise {anatomy_family} bone structure, clean skeleton structure with a faint translucent outer body contour outline of the {animal_cap} showing bone-to-body relationship, labeled with clean, legible English text pointers identifying major joints and bone groups (Skull, Spine, Shoulder, Rib Cage, Elbow, Radius, Ulna, Wrist, Carpals, Metacarpals, Phalanges, Pelvis, Femur, Patella, Knee, Tibia, Fibula, Hocks, Toes) exactly in the style of a drawing textbook guide, solid pure white background, isolated, high contrast, black lines only."
         aspect_ratio = "3:2"
     elif angle == "threequarter" or angle == "three-quarter" or angle == "three_quarter":
-        prompt = f"Anatomical three-quarter view skeleton of a {animal}, body angled at 45 degrees, facing left, standing pose. Charcoal pencil drawing, scientific illustration, precise joints, solid pure white background, isolated."
+        prompt = f"Anatomical three-quarter view skeleton of a {animal_cap}, body angled at 45 degrees, facing left, standing pose. Clean charcoal pencil sketch, medical drawing, precise {anatomy_family} bone structure, clean skeleton structure with a faint translucent outer body contour outline of the {animal_cap} showing bone-to-body relationship, labeled with clean, legible English text pointers identifying major joints and bone groups (Skull, Spine, Shoulder, Rib Cage, Elbow, Radius, Ulna, Wrist, Carpals, Metacarpals, Phalanges, Pelvis, Femur, Patella, Knee, Tibia, Fibula, Hocks, Toes) exactly in the style of a drawing textbook guide, solid pure white background, isolated, high contrast, black lines only."
         aspect_ratio = "4:3"
     else:
-        prompt = f"Anatomical skeleton drawing of a {animal}, solid pure white background, charcoal sketch, isolated."
+        prompt = f"Anatomical skeleton drawing of a {animal_cap}, solid pure white background, charcoal sketch, isolated."
         aspect_ratio = "1:1"
 
     print(f"開始為 {animal} ({angle}) 生成骨骼圖...")
