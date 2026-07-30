@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* Fonts loaded via <link> in index.html with display=optional */
 
 :root {
   --color-bg-canvas: #FBFBFA;
@@ -53,6 +53,10 @@ header {
 
 .brand {
   cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: nowrap;
 }
 
 .brand-title {
@@ -62,6 +66,7 @@ header {
   letter-spacing: -0.5px;
   position: relative;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .brand-title::after {
@@ -81,11 +86,7 @@ header {
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--color-text-ink);
-  margin-left: 16px;
-  display: inline-block;
-  transform: none;
-  vertical-align: bottom;
-  margin-bottom: 1px;
+  white-space: nowrap;
 }
 
 nav {
@@ -1884,13 +1885,33 @@ footer {
   color: var(--color-accent);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   header {
     position: relative;
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: center !important;
     padding: 16px 20px !important;
+  }
+
+  .brand {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+  }
+
+  .brand-title {
+    font-size: 1.95rem !important;
+    margin: 0 !important;
+  }
+
+  .brand-subtitle {
+    display: block !important;
+    margin-left: 20px !important;
+    margin-top: 16px !important;
+    font-size: 1.35rem !important;
+    letter-spacing: 0.5px !important;
   }
 
   .mobile-menu-btn {
