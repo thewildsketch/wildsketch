@@ -1135,6 +1135,8 @@ main {
   /* Safe space for floating toolbar, aligns image higher */
   cursor: grab;
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: none !important;
 }
 
 .lightbox-viewport:active,
@@ -1166,7 +1168,11 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
+  object-fit: contain;
   pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
   mix-blend-mode: normal;
   transition: outline 0.15s ease, outline-offset 0.15s ease;
   box-sizing: border-box;

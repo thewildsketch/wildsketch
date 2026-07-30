@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ImageWithFallback from './common/ImageWithFallback';
 import { getAssetUrl } from '../utils/assetHelper';
 
@@ -18,7 +18,6 @@ export default function LightboxModal({ imageUrl, skeletonUrl, onClose }) {
   const [adjustMode, setAdjustMode] = useState('sync'); // 'sync' | 'skeleton'
 
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isOverlay, setIsOverlay] = useState(false);
   const [opacity, setOpacity] = useState(80);
   const [skeletonInverted, setSkeletonInverted] = useState(true);
@@ -121,33 +120,143 @@ export default function LightboxModal({ imageUrl, skeletonUrl, onClose }) {
     }
   };
 
-  // Drag listeners supporting individual layer translation
-  const handleMouseDown = (e) => {
+  // Lock background scrolling and touch action when Lightbox is active
+  useEffect(() => {
+    const origOverflow = document.body.style.overflow;
+    const origTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = origOverflow;
+      document.body.style.touchAction = origTouchAction;
+    };
+  }, []);
+
+  // Ref hooks for synchronous event handling (prevents React render latency bugs)
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const positionRef = useRef(position);
+  const skeletonPositionRef = useRef(skeletonPosition);
+  const scaleRef = useRef(scale);
+  const skeletonScaleRef = useRef(skeletonScale);
+  const adjustModeRef = useRef(adjustMode);
+  const touchDistRef = useRef(null);
+  const initialScaleRef = useRef(1);
+
+  useEffect(() => { positionRef.current = position; }, [position]);
+  useEffect(() => { skeletonPositionRef.current = skeletonPosition; }, [skeletonPosition]);
+  useEffect(() => { scaleRef.current = scale; }, [scale]);
+  useEffect(() => { skeletonScaleRef.current = skeletonScale; }, [skeletonScale]);
+  useEffect(() => { adjustModeRef.current = adjustMode; }, [adjustMode]);
+
+  const getEventCoords = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  };
+
+  const handleStart = useCallback((e) => {
+    if (e.cancelable) e.preventDefault();
+
+    if (e.touches && e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      touchDistRef.current = Math.sqrt(dx * dx + dy * dy);
+      initialScaleRef.current = adjustModeRef.current === 'skeleton' ? skeletonScaleRef.current : scaleRef.current;
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      return;
+    }
+
+    const { x, y } = getEventCoords(e);
+    isDraggingRef.current = true;
     setIsDragging(true);
-    if (adjustMode === 'skeleton') {
-      setDragStart({ x: e.clientX - skeletonPosition.x, y: e.clientY - skeletonPosition.y });
-    } else {
-      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-    }
-    e.preventDefault();
-  };
 
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    if (adjustMode === 'skeleton') {
-      setSkeletonPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      });
+    if (adjustModeRef.current === 'skeleton') {
+      dragStartRef.current = { x: x - skeletonPositionRef.current.x, y: y - skeletonPositionRef.current.y };
     } else {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      });
+      dragStartRef.current = { x: x - positionRef.current.x, y: y - positionRef.current.y };
     }
-  };
+  }, []);
 
-  const handleMouseUp = () => setIsDragging(false);
+  const handleMove = useCallback((e) => {
+    if (e.cancelable) e.preventDefault();
+
+    if (e.touches && e.touches.length === 2 && touchDistRef.current) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const ratio = dist / touchDistRef.current;
+      const newScale = Math.max(0.2, Math.min(initialScaleRef.current * ratio, 4.0));
+
+      if (adjustModeRef.current === 'skeleton') {
+        setSkeletonScale(newScale);
+      } else {
+        setScale(newScale);
+      }
+      return;
+    }
+
+    if (!isDraggingRef.current) return;
+    const { x, y } = getEventCoords(e);
+    const newX = x - dragStartRef.current.x;
+    const newY = y - dragStartRef.current.y;
+
+    if (adjustModeRef.current === 'skeleton') {
+      skeletonPositionRef.current = { x: newX, y: newY };
+      setSkeletonPosition({ x: newX, y: newY });
+    } else {
+      positionRef.current = { x: newX, y: newY };
+      setPosition({ x: newX, y: newY });
+    }
+  }, []);
+
+  const handleEnd = useCallback(() => {
+    isDraggingRef.current = false;
+    setIsDragging(false);
+    touchDistRef.current = null;
+  }, []);
+
+  // Attach global mouse and non-passive touch listeners to prevent mobile browser viewport scrolling and smooth drag
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const onTouchStart = (e) => handleStart(e);
+    const onTouchMove = (e) => handleMove(e);
+    const onTouchEnd = (e) => handleEnd(e);
+
+    const onMouseDown = (e) => handleStart(e);
+    const onMouseMove = (e) => {
+      if (isDraggingRef.current) handleMove(e);
+    };
+    const onMouseUp = (e) => handleEnd(e);
+
+    viewport.addEventListener('touchstart', onTouchStart, { passive: false });
+    viewport.addEventListener('touchmove', onTouchMove, { passive: false });
+    viewport.addEventListener('touchend', onTouchEnd, { passive: false });
+    viewport.addEventListener('touchcancel', onTouchEnd, { passive: false });
+
+    viewport.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      viewport.removeEventListener('touchstart', onTouchStart);
+      viewport.removeEventListener('touchmove', onTouchMove);
+      viewport.removeEventListener('touchend', onTouchEnd);
+      viewport.removeEventListener('touchcancel', onTouchEnd);
+
+      viewport.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [handleStart, handleMove, handleEnd]);
 
   const getAspectRatio = () => {
     if (imageUrl) {
@@ -175,15 +284,17 @@ export default function LightboxModal({ imageUrl, skeletonUrl, onClose }) {
     <div 
       className="lightbox-overlay" 
       data-testid="lightbox-modal"
-      onMouseUp={handleMouseUp}
+      onMouseUp={handleEnd}
+      onTouchEnd={handleEnd}
     >
       <button className="lightbox-close-btn" onClick={onClose} aria-label="✕">✕</button>
 
       <div 
         ref={viewportRef}
         className={`lightbox-viewport ${isDragging ? 'grabbing' : ''}`}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
+        onMouseDown={handleStart}
+        onMouseMove={handleMove}
+        onMouseUp={handleEnd}
       >
         <div 
           className={`lightbox-canvas-container lightbox-image-stage ${isSkeletonBase ? 'skeleton-base-active' : ''}`}
