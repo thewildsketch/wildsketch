@@ -1996,8 +1996,12 @@ footer {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
   }
 
+  .lightbox-viewport {
+    padding-bottom: calc(140px + env(safe-area-inset-bottom, 16px)) !important;
+  }
+
   .lightbox-toolbar-container {
-    bottom: 14px !important;
+    bottom: calc(14px + env(safe-area-inset-bottom, 16px)) !important;
     width: 92vw !important;
     height: auto !important;
   }
@@ -2014,8 +2018,12 @@ footer {
   }
 
   .slider-group {
-    min-width: 100% !important;
+    min-width: auto !important;
     justify-content: center !important;
+  }
+
+  .toolbar-divider {
+    display: none !important;
   }
 }
 
