@@ -17,9 +17,13 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Exclude heavy photo assets from Git repository (Managed via Vercel Blob / Cloudflare R2)
+public/assets/animals/*
+!public/assets/animals/.gitkeep
+
 # OpenSpec
-##.openspec/**
-##!.openspec/.gitkeep
+openspec/*
+!openspec/.gitkeep
 
 # Local backups
 animals_raw/
