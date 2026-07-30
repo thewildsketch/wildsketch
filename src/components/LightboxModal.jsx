@@ -54,7 +54,7 @@ export default function LightboxModal({ imageUrl, skeletonUrl, onClose }) {
     testImg.onerror = () => {
       setSkeletonError(true);
     };
-    testImg.src = skeletonUrl;
+    testImg.src = getAssetUrl(skeletonUrl);
   }, [skeletonUrl]);
 
   // Automatically trigger toast prompt when overlay is enabled and skeleton error occurs
