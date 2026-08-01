@@ -2018,11 +2018,11 @@ footer {
   }
 
   .lightbox-viewport {
-    padding-bottom: calc(140px + env(safe-area-inset-bottom, 16px)) !important;
+    padding-bottom: calc(160px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .lightbox-toolbar-container {
-    bottom: calc(14px + env(safe-area-inset-bottom, 16px)) !important;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
     width: 92vw !important;
     height: auto !important;
   }

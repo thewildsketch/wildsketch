@@ -31,7 +31,7 @@ export default function AnimalInsights({ animal, onNavigateAnimal, onNavigateArt
               >
                 <span className="ref-tag ref-tag-animal">相似動物</span>
                 <span className="ref-link-name">{sa.names.zh}（{sa.names.en}）</span>
-                <span className="ref-link-arrow">➔</span>
+                <span className="ref-link-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
               </button>
             ))}
             {relatedArticlesList.map(art => (
@@ -42,7 +42,7 @@ export default function AnimalInsights({ animal, onNavigateAnimal, onNavigateArt
               >
                 <span className="ref-tag ref-tag-article">專題文章</span>
                 <span className="ref-link-name">{art.title}</span>
-                <span className="ref-link-arrow">➔</span>
+                <span className="ref-link-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
               </button>
             ))}
           </div>

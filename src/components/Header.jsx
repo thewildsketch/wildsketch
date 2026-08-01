@@ -54,7 +54,7 @@ export default function Header({ activeView, onViewChange }) {
           id="nav-submission"
           onClick={closeMobileMenu}
         >
-          素材提供 ↗
+          素材提供 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{display:'inline',verticalAlign:'middle'}}><path d="M2 10L10 2M5 2h5v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </a>*/}
         <a
           href="https://forms.gle/T8M8wAvCmDeG35j1A"
@@ -63,7 +63,7 @@ export default function Header({ activeView, onViewChange }) {
           className="nav-btn feedback-btn"
           onClick={closeMobileMenu}
         >
-          意見回饋 ↗
+          意見回饋 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{display:'inline',verticalAlign:'middle'}}><path d="M2 10L10 2M5 2h5v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </a>
       </nav>
     </header>

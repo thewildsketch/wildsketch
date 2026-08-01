@@ -32,7 +32,7 @@ export default function AnimalDetailView({ animal, onBack, onNavigateAnimal, onN
   return (
     <div className="animal-detail-container" data-testid="detail-view-full">
       <button className="back-link-btn" onClick={onBack}>
-        ← 返回主頁
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{display:'inline',verticalAlign:'middle',marginRight:'6px'}}><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>返回主頁
       </button>
       
       <div className="detail-grid">
