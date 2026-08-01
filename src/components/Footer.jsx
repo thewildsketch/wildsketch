@@ -17,12 +17,11 @@ export default function Footer() {
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
             </svg>
           </a>
-          {/* TODO: Instagram 帳號
-          <a
-            href=""
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-social-link"
+          <a 
+            href="https://www.instagram.com/thewildsketch" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="footer-social-link" 
             title="Instagram 官方帳號"
             data-testid="instagram-link"
           >
@@ -31,7 +30,7 @@ export default function Footer() {
               <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
               <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
             </svg>
-          </a>*/}
+          </a>
         </span>
       </p>
       <p className="footer-disclaimer">部分骨架圖由 AI 輔助生成，經人工審閱，內容僅供速寫與藝術參考用途 · <a href="https://github.com/thewildsketch/wildsketch#license" target="_blank" style={{ color: 'var(--color-accent)', textDecoration: 'underline' }}>授權聲明</a></p>

@@ -1,14 +1,14 @@
 # WildSketch 動物速寫室 🐿️🐕🦌
 
-一個為插畫師與繪畫學習者設計的動物藝用解剖網站。
+一個為插畫師與繪畫學習者打造的動物藝用解剖網站。
 依步態分類常見哺乳動物，提供骨架圖與多角度參考照片，
-並支援骨架疊加顯示與縮放功能，讓速寫練習更直覺。
+並支援骨架疊加顯示功能，讓速寫練習更直覺。
 
 An artistic anatomy reference website for illustrators and drawing learners.
 Browse common mammals by walking posture — plantigrade, digitigrade, and unguligrade —
 with skeleton diagrams, multi-angle photos, and an interactive skeleton overlay tool.
 
-🌐 [Demo](https://wildsketch.vercel.app)
+🌐 [thewildsketch.com](https://thewildsketch.com)
 
 ---
 
