@@ -1,6 +1,9 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
+import React from 'react';
 import App from '../src/App';
+import Header from '../src/components/Header';
+import Footer from '../src/components/Footer';
 
 describe('App Shell Navigation & URL Routing', () => {
   beforeEach(() => {
@@ -11,7 +14,7 @@ describe('App Shell Navigation & URL Routing', () => {
     render(<App />);
     expect(screen.getAllByText(/WildSketch/i)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/動物速寫室/i)[0]).toBeInTheDocument();
-    
+
     // Navigate to Announcements
     const annBtn = screen.getByRole('button', { name: /^公告$/ });
     fireEvent.click(annBtn);
@@ -58,3 +61,24 @@ describe('App Shell Navigation & URL Routing', () => {
   });
 });
 
+describe('Header Component', () => {
+  it('renders navigation links in correct order: 首頁 → 公告 → 專題文章 → 意見回饋', () => {
+    render(<Header activeView="home" onViewChange={() => {}} />);
+
+    expect(screen.getByRole('button', { name: /^首頁$/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^公告$/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^專題文章$/ })).toBeInTheDocument();
+    // 意見回饋 is an external link (<a>)
+    expect(screen.getByRole('link', { name: /意見回饋/ })).toBeInTheDocument();
+    // 素材提供 has been removed from the nav
+    expect(screen.queryByRole('link', { name: /素材提供/ })).not.toBeInTheDocument();
+  });
+});
+
+describe('Footer Component', () => {
+  it('renders copyright text and Instagram social link', () => {
+    render(<Footer />);
+    expect(screen.getByText(/WildSketch 動物速寫室/)).toBeInTheDocument();
+    expect(screen.getByTestId('instagram-link')).toBeInTheDocument();
+  });
+});

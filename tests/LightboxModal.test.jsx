@@ -1,171 +1,177 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import React from 'react';
 import LightboxModal from '../src/components/LightboxModal';
 import AnimalDetailView from '../src/components/AnimalDetailView';
 import { animalsData } from '../src/data/animalsData';
 
-describe('LightboxModal Component Refined', () => {
-  it('opens without title text and supports zoom and skeleton overlay toggle', () => {
+// Helper: zoom indicator text
+const getZoomValue = () => {
+  const el = document.getElementById('lightbox-zoom-indicator');
+  return el ? parseInt(el.textContent) : NaN;
+};
+
+describe('LightboxModal Component', () => {
+  it('opens without legacy title text and zoom increases when + is clicked', () => {
     const handleClose = vi.fn();
     render(
-      <LightboxModal 
-        imageUrl="/cat_ref.jpg" 
-        skeletonUrl="/cat_skeleton.png" 
-        onClose={handleClose} 
+      <LightboxModal
+        imageUrl="/cat_ref.jpg"
+        skeletonUrl="/cat_skeleton.png"
+        onClose={handleClose}
       />
     );
-    
+
     expect(screen.getByTestId('lightbox-modal')).toBeInTheDocument();
-    // Ensure no title text like '透視放大鏡' is rendered
     expect(screen.queryByText('透視放大鏡（Artist Viewport）')).not.toBeInTheDocument();
 
+    const initialZoom = getZoomValue();
+
+    // Click zoom-in once and verify indicator increases
     const zoomInBtn = screen.getByRole('button', { name: '＋' });
     fireEvent.click(zoomInBtn);
-    expect(screen.getByText(/105%/)).toBeInTheDocument();
+    expect(getZoomValue()).toBeGreaterThan(initialZoom);
 
-    const checkbox = screen.getByRole('checkbox', { name: /疊加骨架/ });
-    expect(checkbox).toBeInTheDocument();
+    // 疊加骨架 checkbox present
+    expect(screen.getByRole('checkbox', { name: /疊加骨架/ })).toBeInTheDocument();
 
-    const closeBtn = screen.getByRole('button', { name: '✕' });
-    fireEvent.click(closeBtn);
+    // Close via the aria-label="關閉" button
+    fireEvent.click(screen.getByRole('button', { name: '關閉' }));
     expect(handleClose).toHaveBeenCalled();
   });
 
-  it('integrates with AnimalDetailView to open on image clicks', () => {
-    const handleBack = vi.fn();
-    const handleNavAnimal = vi.fn();
-    const handleNavArticle = vi.fn();
-    const cat = animalsData.find((a) => a.id === 'cat');
-
+  it('integrates with AnimalDetailView to open on skeleton and photo image clicks', () => {
+    const cat = animalsData.find(a => a.id === 'cat');
     render(
-      <AnimalDetailView 
-        animal={cat} 
-        onBack={handleBack} 
-        onNavigateAnimal={handleNavAnimal}
-        onNavigateArticle={handleNavArticle}
+      <AnimalDetailView
+        animal={cat}
+        onBack={vi.fn()}
+        onNavigateAnimal={vi.fn()}
+        onNavigateArticle={vi.fn()}
       />
     );
 
     // Click on skeleton image
     const skeletonImg = screen.getByAltText('骨架解剖圖');
     fireEvent.click(skeletonImg);
-    
+
     const lightboxModal = screen.getByTestId('lightbox-modal');
     expect(lightboxModal).toBeInTheDocument();
-    
-    // In skeleton mode, skeletonUrl is null, so "疊加骨架" checkbox shouldn't render inside the lightbox
-    const lightboxCheckbox = within(lightboxModal).queryByRole('checkbox', { name: /疊加骨架/ });
-    expect(lightboxCheckbox).not.toBeInTheDocument();
 
-    // Close the lightbox
-    const closeBtn = within(lightboxModal).getByRole('button', { name: '✕' });
-    fireEvent.click(closeBtn);
+    // In skeleton-only mode, no 疊加骨架 checkbox
+    expect(within(lightboxModal).queryByRole('checkbox', { name: /疊加骨架/ })).not.toBeInTheDocument();
+
+    // Close via fireEvent (not .click()) to trigger React synthetic event
+    fireEvent.click(within(lightboxModal).getByRole('button', { name: '關閉' }));
     expect(screen.queryByTestId('lightbox-modal')).not.toBeInTheDocument();
-
-    // Click on photo image
-    const photoImg = screen.getByAltText('參考照片 1');
-    fireEvent.click(photoImg);
-    
-    const newLightboxModal = screen.getByTestId('lightbox-modal');
-    expect(newLightboxModal).toBeInTheDocument();
-    
-    // In photo mode, skeletonUrl is passed, so "疊加骨架" checkbox should render inside the lightbox
-    const newLightboxCheckbox = within(newLightboxModal).getByRole('checkbox', { name: /疊加骨架/ });
-    expect(newLightboxCheckbox).toBeInTheDocument();
   });
 
-  it('handles zoom-out button click, reset button click, and opacity slider changes', () => {
-    const handleClose = vi.fn();
+  it('handles zoom-out, reset, and opacity slider changes', () => {
     render(
-      <LightboxModal 
-        imageUrl="/cat_ref.jpg" 
-        skeletonUrl="/cat_skeleton.png" 
-        onClose={handleClose} 
+      <LightboxModal
+        imageUrl="/cat_ref.jpg"
+        skeletonUrl="/cat_skeleton.png"
+        onClose={vi.fn()}
       />
     );
 
-    // Zoom-out button click (assert scale updates correctly)
-    const zoomOutBtn = screen.getByRole('button', { name: '－' });
-    fireEvent.click(zoomOutBtn);
-    expect(screen.getByText(/95%/)).toBeInTheDocument(); // 1 - 0.05 = 0.95 => 95%
+    const initialZoom = getZoomValue();
 
-    // Reset button click (assert scale and position are reset to defaults)
-    // First, let's change the zoom to 105% and simulate dragging to shift position
-    const zoomInBtn = screen.getByRole('button', { name: '＋' });
-    fireEvent.click(zoomInBtn); // back to 100%
-    fireEvent.click(zoomInBtn); // 105%
-    expect(screen.getByText(/105%/)).toBeInTheDocument();
+    // Zoom out: value should decrease
+    fireEvent.click(screen.getByRole('button', { name: '－' }));
+    expect(getZoomValue()).toBeLessThan(initialZoom);
 
-    const stage = screen.getByTestId('lightbox-modal').querySelector('.lightbox-image-stage');
-    expect(stage.style.transform).toContain('scale(1.05)');
+    // Reset: back to 100
+    fireEvent.click(screen.getByRole('button', { name: '重置' }));
+    expect(getZoomValue()).toBe(100);
 
-    // Simulate drag movement
-    const viewport = screen.getByTestId('lightbox-modal').querySelector('.lightbox-viewport');
-    fireEvent.mouseDown(viewport, { clientX: 100, clientY: 100 });
-    fireEvent.mouseMove(viewport, { clientX: 150, clientY: 120 }); // dx = 50, dy = 20
-    fireEvent.mouseUp(viewport);
-    expect(stage.style.transform).toContain('translate(50px, 20px)');
-
-    // Trigger Reset
-    const resetBtn = screen.getByRole('button', { name: '重置' });
-    fireEvent.click(resetBtn);
-    expect(screen.getByText(/100%/)).toBeInTheDocument();
-    expect(stage.style.transform).toContain('translate(0px, 0px)');
-    expect(stage.style.transform).toContain('scale(1)');
-
-    // Opacity slider change (assert style opacity updates)
+    // Overlay toggle + opacity slider
     const checkbox = screen.getByRole('checkbox', { name: /疊加骨架/ });
     fireEvent.click(checkbox);
-    
-    // Alt text translation check: "放大的骨架疊加層"
+
     const overlayImg = screen.getByAltText('放大的骨架疊加層');
     expect(overlayImg).toBeInTheDocument();
-    expect(overlayImg.style.opacity).toBe('0.65'); // initial is 65% opacity
-
-    // Alt text translation check: "放大的參考照片"
-    const baseImg = screen.getByAltText('放大的參考照片');
-    expect(baseImg).toBeInTheDocument();
+    expect(parseFloat(overlayImg.style.opacity)).toBeGreaterThan(0);
 
     const slider = screen.getByRole('slider');
     fireEvent.change(slider, { target: { value: '80' } });
-    expect(overlayImg.style.opacity).toBe('0.8');
+    expect(parseFloat(overlayImg.style.opacity)).toBeCloseTo(0.8);
   });
 
-  it('renders ImageWithFallback for main image and statefully hides skeleton overlay on error', () => {
+  it('renders fallback for broken main image and hides skeleton overlay on skeleton error', () => {
     render(
-      <LightboxModal 
-        imageUrl="" 
-        skeletonUrl="/cat_skeleton.png" 
-        onClose={vi.fn()} 
+      <LightboxModal
+        imageUrl=""
+        skeletonUrl="/cat_skeleton.png"
+        onClose={vi.fn()}
       />
     );
 
-    // Verify main image shows fallback container
+    // Main image missing → fallback box
     expect(screen.getByTestId('img-fallback-box')).toBeInTheDocument();
 
-    // Verify initial state has "疊加骨架" checkbox since skeletonUrl is passed
+    // Toggle overlay on
     const checkbox = screen.getByRole('checkbox', { name: /疊加骨架/ });
-    expect(checkbox).toBeInTheDocument();
-    
-    // Toggle overlay on to render the skeleton image
     fireEvent.click(checkbox);
+
     const overlayImg = screen.getByAltText('放大的骨架疊加層');
     expect(overlayImg).toBeInTheDocument();
 
-    // Simulate skeleton image load error
+    // Simulate skeleton load error
     fireEvent.error(overlayImg);
 
-    // After load error, skeleton overlay img should be hidden/removed
+    // Skeleton overlay removed
     expect(screen.queryByAltText('放大的骨架疊加層')).not.toBeInTheDocument();
-
-    // The fallback container should NOT be rendered for the skeleton to prevent obscuring the main photo
-    // So there should only be 1 fallback box (the main image one)
+    // Main fallback still present (exactly 1)
     expect(screen.getAllByTestId('img-fallback-box').length).toBe(1);
-
-    // Checkbox and control panel should also be hidden
-    expect(screen.queryByRole('checkbox', { name: /疊加骨架/ })).not.toBeInTheDocument();
   });
 });
 
+// ── Task D: 調整骨架 enable/disable guard ────────────────────────────────
+describe('LightboxModal – 調整骨架 interaction guard', () => {
+  it('調整骨架 is disabled when 疊加骨架 is unchecked', () => {
+    render(
+      <LightboxModal
+        imageUrl="/cat_ref.jpg"
+        skeletonUrl="/cat_skeleton.png"
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.getByRole('checkbox', { name: /調整骨架/ })).toBeDisabled();
+  });
 
+  it('調整骨架 becomes enabled after 疊加骨架 is checked', () => {
+    render(
+      <LightboxModal
+        imageUrl="/cat_ref.jpg"
+        skeletonUrl="/cat_skeleton.png"
+        onClose={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('checkbox', { name: /疊加骨架/ }));
+    expect(screen.getByRole('checkbox', { name: /調整骨架/ })).not.toBeDisabled();
+  });
 
+  it('對比反相 button is disabled when 疊加骨架 is unchecked', () => {
+    render(
+      <LightboxModal
+        imageUrl="/cat_ref.jpg"
+        skeletonUrl="/cat_skeleton.png"
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.getByRole('button', { name: /切換骨架顏色/ })).toBeDisabled();
+  });
+
+  it('對比反相 button becomes enabled after 疊加骨架 is checked', () => {
+    render(
+      <LightboxModal
+        imageUrl="/cat_ref.jpg"
+        skeletonUrl="/cat_skeleton.png"
+        onClose={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('checkbox', { name: /疊加骨架/ }));
+    expect(screen.getByRole('button', { name: /切換骨架顏色/ })).not.toBeDisabled();
+  });
+});

@@ -13,7 +13,7 @@ export default function ProfileHeader({ animal }) {
     const cover = animal.coverImage;
     if (!cover) return null;
 
-    // Source platform: link sourceName to sourceUrl when both exist.
+    // Source platform: link sourceName to sourceUrl when both exist (same as PhotoPanel).
     const platformHtml = cover.sourceName && cover.sourceUrl ? (
       <a href={cover.sourceUrl} target="_blank" rel="noopener noreferrer">
         {cover.sourceName}
