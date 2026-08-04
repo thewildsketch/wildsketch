@@ -34,7 +34,7 @@ project: wildsketch
   * 必須存放在對應角度的**子資料夾**中：
     * 相片參考：`public/assets/animals/<animal_id>/<angle>/<angle>_ref<hash值>.jpg`
     * 專屬骨骼：`public/assets/animals/<animal_id>/<angle>/<angle>_ref<hash值>_skeleton.png` (去背透明)
-  * *註：`<hash值>` 可採用簡短隨機雜湊值或序號，以確保檔名唯一性。*
+  * **註：`<hash值>` 可採用簡短隨機雜湊值或序號，以確保檔名唯一性。**
 
 ---
 
@@ -57,21 +57,21 @@ project: wildsketch
 3. **更新時間戳記**：將該動物主體的 `updatedAt` 更新為目前的 ISO-8601 UTC 時間戳記。
 
 ### 工作流 3：上傳新照片參考
-1. **下載與記錄出處**：
-   * 在 Unsplash 等授權平台尋找合適圖片。
-   * 下載最高解析度原圖，並將下載網址記錄於 `sourceImage` 欄位。
-   * 將 Unsplash 原圖頁面網址記錄於 `sourceUrl` 欄位，以利署名追蹤。
-2. **後製對齊與骨骼產製**：
-   * **參考照片與疊加骨骼保留原始比例與尺寸（不強迫裁剪）**，以防動物主體被截斷。
-   * **產圖規範**：疊加骨架圖**絕對禁止包含體表外輪廓與任何皮肉/頸部/腹部等外觀線條**（必須為 **pure bones only**，在提示詞中明確寫入 `strictly NO body contour outline, NO neck skin outline, NO belly skin outline, NO flesh outline, NO skin lines`），且**絕對禁止包含任何英文標籤文字與指引線**（避免與底圖照片疊加時干擾寫生）。
-   * **對齊規範**：以原始照片中動物的姿態為基準直接生成對應姿勢之骨架。使用 `scripts/remove_background.py` 去背後，等比例縮放並置中對位（骨架覆蓋照片中動物位置即可，**禁止採用容易切割裁剪的非剛性仿射扭曲變換**），確保去背骨骼 PNG 的畫布大小與照片寬高像素 100% 完全一致。
-   * **後製裁切規範**：**嚴禁使用 AI 進行 Outpainting 等背景補足或生成式填充**。必須尊重原照片構圖，僅進行等比例縮放與對齊裁切。
-   * 將彩色照片與透明 PNG 骨架存放至對應視角子資料夾：`public/assets/animals/<animal_id>/<angle>/`。
-3. **更新照片結構**：
-   * 在對應的 `angles.<angle>.photos` 陣列中新增相片物件，將相對路徑填入 `url` 與 `skeleton` 欄位（對齊子資料夾格式，如 `"/assets/animals/cat/front/front_ref2.jpg"`）。
+1. **下載、壓縮與儲存原始參考照片**：
+   * 於 Unsplash 等開源圖片平台下載最高解析度原圖，並將原圖下載網址記錄於 `sourceImage`，將 Unsplash 原圖頁面網址記錄於 `sourceUrl` 欄位，以利出處署名與素材重新下載。
+   * 參考照片保留原始的長寬比例與畫面構圖（不強迫進行任何寬高比裁切與 AI 背景填充），僅需進行大小優化壓縮。
+   * **壓縮與儲存**：確認檔案大小**壓縮在 1MB 以下**，並將彩色 JPG 儲存至對應角度的子資料夾中，路徑格式為 `public/assets/animals/<animal_id>/<angle>/<angle>_ref_<hash值>.jpg`（例如 `public/assets/animals/cat/front/front_ref_5a1e2f.jpg`）。
+2. **產製對位骨骼透明 PNG**：
+   * **分析動物姿態**：觀察參考照片中動物的實際朝向與姿勢，直接依此朝向與骨骼位置進行骨骼生成，保留照片的原始朝向與相貌（不需水平翻轉）。
+   * **骨骼美術規格 (Pure Bones Recipe)**：疊加骨骼必須為炭筆素描風格之**純骨骼 (Pure Bones Only)** 圖像。畫面中僅包含骨頭線條，不包含半透明體表輪廓、不包含皮肉線條、不包含英文標記文字與任何指引線。
+   * **去背與對位**：呼叫 `scripts/remove_background.py` 將生成骨架圖去背。將去背透明 PNG 以等比例進行縮放或位移，使其骨骼精確疊加覆蓋在相片中動物對應位置（禁止進行非剛性形變或扭曲）。
+   * **畫布與壓縮一致性**：確保去背骨骼 PNG 的畫布大小與寬高像素，與對應的 `.jpg` 參考照片 **100% 完全一致**（禁止自動緊縮裁切邊緣透明區域），且檔案大小亦需**壓縮在 1MB 以下**。
+   * 儲存至與照片相同的子目錄中，路徑格式為 `public/assets/animals/<animal_id>/<angle>/<angle>_ref_<hash值>_skeleton.png`（例如 `public/assets/animals/cat/front/front_ref_5a1e2f_skeleton.png`）。
+3. **更新資料集 Schema 結構**：
+   * 在對應的 `angles.<angle>.photos` 陣列中新增相片物件，將相對路徑填入 `url` 與 `skeleton` 欄位（對齊子資料夾格式，如 `"/assets/animals/cat/front/front_ref_5a1e2f.jpg"` 與 `"/assets/animals/cat/front/front_ref_5a1e2f_skeleton.png"`）。
    * 預設照片的 `status` 設為 `"draft"`。
    * 初始化時間戳記：`createdAt` 與 `updatedAt` 設定為目前 ISO-8601 UTC 時間戳記，`publishedAt` 設定為 `null`。
-4. **詢問發佈意願**：詢問用戶是否發佈該相片。
+4. **詢問發佈意願**：詢問用戶是否要發佈該相片。
 
 ### 工作流 4：發佈資料變更
 當用戶要求發佈動物或照片時：
@@ -87,22 +87,8 @@ project: wildsketch
 
 ---
 
-## 📝 附錄：公告與專題文章資產規則
-
-為了在後台及資料管理中維持命名與生命週期的唯一性，公告與專題文章的 ID 命名與檔案位置應遵守以下原則：
-
-* **公告資料集**：
-  * 資料檔案：`src/data/announcementsData.js`
-  * ID 命名規則：`ann-<hash值>` (例如 `ann-7a2e8f`)
-  * 時間戳記：必須包含與對齊統一的 `createdAt`、`updatedAt` 與 `publishedAt`。
-* **專題文章資料集**：
-  * 資料檔案：`src/data/articlesData.jsx`
-  * ID 命名規則：`article-<hash值>` (例如 `article-5d9c1b`)
-  * 時間戳記：必須包含與對齊統一的 `createdAt`、`updatedAt` 與 `publishedAt`。
-
----
-
 ## 🔍 驗證與自檢
 本技能的變更屬於靜態資料與資產維護，在執行完成後：
-1. **略過測試與建置**：無須在本地執行 `npm run test` 與 `npm run build`，以節省 Token。
-2. **Stage 檔案**：將異動的檔案加入 Stage，但**絕對禁止自行執行 commit**，留給用戶 Review。
+1. **圖片壓縮確認**：確認所有圖片資產大小均已壓縮在 **< 1MB**。
+2. **略過測試與建置**：無須在本地執行 `npm run test` 與 `npm run build`，以節省 Token。
+3. **Stage 檔案**：將異動的檔案加入 Stage，但**絕對禁止自行執行 commit**，留給用戶 Review。

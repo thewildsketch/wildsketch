@@ -138,21 +138,14 @@
   4. **主動產出摘要文件**：當前交接任務完成後，Tech-Lead **必須**在對話結尾主動產出一份「交接摘要」（依上述模板）、符合格式的「建議 Commit Message」和「測試成功之日誌報告」，隨後保持 Uncommitted 狀態，靜候用戶 Review 驗收。
 
 ### 4. 🛢️ Dataset-Manager (視窗 4：資料集管理員)
-* **主要技能**：`wildsketch-animal-curator` 技能、`AI 影像生成`、Python 腳本去背 (`scripts/remove_background.py`)、Python 腳本裁剪 (`scripts/crop_image.py`)
-* **職責**：專門負責管理「動物資料」與「專題文章」資產，包含維護專案資料集（`src/data/`）以及動物圖片專屬資料夾（`public/assets/animals/`）內的所有相片、骨架圖資產。UI 介面設計素材（如圖標、背景網格）則由 UX-Designer 管理，兩者完全隔離。
+* **主要技能**：`wildsketch-animal-curator`、`AI 影像生成`
+* **職責**：專門負責管理「動物資料」資產，包含維護專案資料集（`src/data/`）以及動物圖片專屬資料夾（`public/assets/animals/`）內的所有骨架圖、照片資產。UI 介面設計素材（如圖標、背景網格）則由 UX-Designer 管理，兩者完全隔離。
 * **常規與交接工作流**：
   1. **規格與技能遵循 SOP**：
      * **核心 SOP**：所有動物資料新增、更新、照片上架及生命週期發佈，**必須直接呼叫並嚴格遵循** `wildsketch-animal-curator` 技能所定義的標準作業程序（SOP）。
      * **時間戳記規範**：嚴格依該技能之規範，管理 `createdAt`、`updatedAt` 與 `publishedAt` 的時戳填寫邏輯（例如每次修改動物資訊或發佈相片時，必須同步更新動物主體的 `updatedAt`）。
      * **文字長度限制**：文字欄位定義與規格對齊 `openspec/specs/wildsketch/spec.md`。
-  2. **資產後製與對位存放**：
-     * **比例裁剪與防變形**：在導入原始相片（如 Unsplash 下載之原圖）前，**必須使用** `scripts/crop_image.py` 進行等比例的**置中實體裁剪（Center Crop）**與縮放以符合規格（封面照 3:2、正視角 1:1、側面照 3:2），並遵循「嚴禁 AI 背景填充 (No AI Outpainting)」的真實度原則。
-     * **規格與提示詞參考**：產製骨架與疊加骨架圖時，應參考 `openspec/specs/wildsketch/asset-spec.md` 中的 Prompt 模板與 Aspect Ratio 對齊表。
-     * **對位與去背處理**：必須執行 `scripts/remove_background.py` 進行去背處理。照片專屬疊加骨架圖與對應照片的像素尺寸與比例必須**完全一致（無緊縮裁剪）**，且側面與 3/4 視角主體一律朝向**左側**。
-     * **資產歸檔與存放**：將處理妥當的相片與骨架圖存入 `public/assets/animals/<animal_id>/` 目錄。
-  3. **資料集代碼更新**：
-     * 更新 `animalsData.js` 或 `articlesData.jsx` 的資料內容與圖片參照路徑。
-  4. **驗證自檢與豁免機制**：
+  2. **驗證自檢與豁免機制**：
      * **略過測試與建置**：依據技能規範，在執行資料集維護後，為節省 Token 應直接**略過**執行本地 `npm run test` 與 `npm run build`。
      * **主動產出摘要與 Stage**：將異動檔案加入 Stage（絕對禁止自行執行 commit），並在對話結尾提供符合格式之「資料集更新通知」（包含建議 Commit Message），靜候用戶 Review 驗收。
 
