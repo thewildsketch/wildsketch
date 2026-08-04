@@ -1792,8 +1792,8 @@ footer {
   border-radius: 12px;
   padding: 30px;
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 30px;
+  grid-template-columns: 200px 1fr;
+  gap: 40px;
   align-items: center;
   position: relative;
 }
@@ -1813,8 +1813,8 @@ footer {
 }
 
 .about-me-seal {
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 200px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -1837,7 +1837,7 @@ footer {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-text-ink);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   position: relative;
   display: inline-block;
 }
