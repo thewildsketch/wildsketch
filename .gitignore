@@ -44,11 +44,20 @@ Thumbs.db
 *.sln
 *.sw?
 
-# AI Agents
+# AI Agents — runtime / cache dirs (not versioned)
 .agent/
-.agents/
 .claude/
 .cursor/
 .codex/
 .gemini/
 .superpowers/
+
+# .agents/ — project-level agent docs
+.agents/**
+!.agents/roles/
+!.agents/roles/**
+!.agents/shared/
+!.agents/shared/**
+!.agents/skills/
+!.agents/skills/wildsketch-animal-curator/
+!.agents/skills/wildsketch-animal-curator/**
