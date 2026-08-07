@@ -1314,7 +1314,7 @@ main {
 }
 
 .toolbar-btn.active svg {
-  stroke: var(--color-accent) !important;
+  stroke: var(--color-bg-canvas) !important;
 }
 
 .toolbar-btn:disabled svg {
@@ -1581,13 +1581,13 @@ main {
 }
 
 .toolbar-btn.active {
-  background-color: var(--color-accent-light) !important;
+  background-color: var(--color-accent) !important;
   border-color: var(--color-accent) !important;
-  color: var(--color-accent) !important;
+  color: #fff !important;
 }
 
 .toolbar-btn.active svg {
-  stroke: var(--color-accent) !important;
+  stroke: var(--color-bg-canvas) !important;
 }
 
 .toolbar-text {
