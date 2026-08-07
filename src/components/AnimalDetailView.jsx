@@ -3,7 +3,8 @@ import ProfileHeader from './ProfileHeader';
 import ClassificationCard from './ClassificationCard';
 import ReferenceStudio from './ReferenceStudio';
 import AnimalInsights from './AnimalInsights';
-import LightboxModal from './LightboxModal';
+import SkeletonLightboxModal from './SkeletonLightboxModal';
+import PhotoLightboxModal from './PhotoLightboxModal';
 
 export default function AnimalDetailView({ animal, onBack, onNavigateAnimal, onNavigateArticle }) {
   const [lightbox, setLightbox] = useState(null); // { imageUrl, skeletonUrl }
@@ -20,11 +21,11 @@ export default function AnimalDetailView({ animal, onBack, onNavigateAnimal, onN
       const isSkeleton = target.classList.contains('anatomy-sketch-img');
       const angleData = animal.angles[activeAngle];
       if (isSkeleton) {
-        setLightbox({ imageUrl: target.src, skeletonUrl: null });
+        setLightbox({ imageUrl: target.src, isSkeletonBase: true });
       } else {
         const photoSkeleton = target.getAttribute('data-photo-skeleton');
         const skeletonUrl = (photoSkeleton && photoSkeleton !== "null") ? photoSkeleton : angleData.skeleton;
-        setLightbox({ imageUrl: target.src, skeletonUrl: skeletonUrl });
+        setLightbox({ imageUrl: target.src, skeletonUrl: skeletonUrl, isSkeletonBase: false });
       }
     }
   };
@@ -55,13 +56,18 @@ export default function AnimalDetailView({ animal, onBack, onNavigateAnimal, onN
         </div>
       </div>
 
-      {lightbox && (
-        <LightboxModal 
+      {lightbox && lightbox.isSkeletonBase ? (
+        <SkeletonLightboxModal 
+          imageUrl={lightbox.imageUrl} 
+          onClose={() => setLightbox(null)} 
+        />
+      ) : lightbox ? (
+        <PhotoLightboxModal 
           imageUrl={lightbox.imageUrl} 
           skeletonUrl={lightbox.skeletonUrl} 
           onClose={() => setLightbox(null)} 
         />
-      )}
+      ) : null}
     </div>
   );
 }

@@ -72,8 +72,9 @@ describe('AnimalFilter Component', () => {
 });
 
 describe('AboutMeBlock Component', () => {
-  it('is temporarily hidden and renders null', () => {
+  it('renders successfully with the about me section', () => {
     const { container } = render(<AboutMeBlock />);
-    expect(container.firstChild).toBeNull();
+    expect(container.querySelector('.about-me-section')).toBeInTheDocument();
+    expect(screen.getByText('關於 WildSketch')).toBeInTheDocument();
   });
 });
