@@ -29,6 +29,8 @@ openspec/*
 animals_raw/
 animals_bk/
 data_bk/
+staging/
+tmp/
 
 # OS files
 Thumbs.db
@@ -54,6 +56,7 @@ Thumbs.db
 
 # .agents/ — project-level agent docs
 .agents/**
+skills-lock.json
 !.agents/roles/
 !.agents/roles/**
 !.agents/shared/
