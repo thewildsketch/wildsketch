@@ -486,6 +486,36 @@ main {
   gap: 30px;
 }
 
+@media (max-width: 1023px) {
+  .detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: stretch;
+  }
+  .profile-sidebar {
+    display: contents;
+  }
+  .profile-sidebar > :nth-child(1) {
+    order: 1; /* Profile Header */
+  }
+  .studio-panel {
+    order: 2; /* Reference Studio Workspace - Pulled to 2nd position */
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .profile-sidebar > :nth-child(2) {
+    order: 3; /* Classification Card */
+  }
+  .profile-sidebar > :nth-child(3) {
+    order: 4; /* Animal Insights facts */
+  }
+  .profile-sidebar > :nth-child(4) {
+    order: 5; /* Related Links */
+  }
+}
+
+
 .detail-header-card {
   background: var(--color-bg-card);
   border: 1.5px solid var(--color-border-sketch);
@@ -1483,6 +1513,79 @@ main {
   pointer-events: none;
 }
 
+/* Tooltip右上角關閉按鈕 */
+.tooltip-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+.tooltip-close-btn:hover {
+  color: var(--color-accent);
+}
+
+/* 骨架載入遮罩（比照「進入速寫室」全幅半透明風格） */
+.lightbox-skeleton-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  background: rgba(254, 253, 249, 0.78); /* Cream semi-transparent, same language as card-action-overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 1050;
+  pointer-events: none;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--color-text-ink);
+  font-weight: bold;
+}
+
+
+.lightbox-skeleton-loader .loader-pencil-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  animation: pencilWiggle 1s ease-in-out infinite alternate;
+}
+
+.lightbox-skeleton-loader .loader-pencil-icon svg {
+  stroke: var(--color-accent);
+}
+
+@keyframes pencilWiggle {
+  0% { transform: rotate(0deg) translate(0, 0); }
+  100% { transform: rotate(15deg) translate(2px, -3px); }
+}
+
+/* Skeleton image transition styles */
+.lightbox-skeleton-img,
+.lightbox-skeleton-overlay {
+  transition: opacity 0.3s ease;
+}
+
+/* Loading class to keep opacity at 0 */
+.lightbox-skeleton-img.loading,
+.lightbox-skeleton-overlay.loading {
+  opacity: 0 !important;
+}
+
+
 /* Floating overall instructions tooltip card */
 .lightbox-help-tooltip {
   position: fixed;
@@ -2227,7 +2330,7 @@ footer {
   }
   .lightbox-help-tooltip {
     position: fixed !important;
-    top: 16px !important;
+    top: 80px !important;
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) translateY(-10px) !important;

@@ -195,7 +195,7 @@ export const animalsData = [
     },
     breeds: [
       {
-        id: "golden_retriever",
+        id: "golden-retriever",
         names: {
           zh: "黃金獵犬",
           en: "Golden Retriever"
@@ -301,7 +301,7 @@ export const animalsData = [
             status: "published",
             url: "/assets/animals/dog/front/front_ref_d1e98f.jpg",
             skeleton: "/assets/animals/dog/front/front_ref_d1e98f_skeleton.png",
-            breedId: "golden_retriever",
+            breedId: "golden-retriever",
             sourceName: "Unsplash",
             sourceUrl: "https://unsplash.com/photos/yellow-labrador-retriever-biting-yellow-tulip-flower-Sg3XwuEpybU",
             sourceImage: "https://images.unsplash.com/photo-1552053831-71594a27632d",

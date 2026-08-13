@@ -12,6 +12,7 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
   const [skeletonVisible, setSkeletonVisible] = useState(true);
   const [skeletonInverted, setSkeletonInverted] = useState(true);
   const [skeletonError, setSkeletonError] = useState(false);
+  const [skeletonLoading, setSkeletonLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
 
   const {
@@ -55,6 +56,11 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
     }
   }, []);
 
+  const handleBackdropPointerDown = useCallback(() => {
+    dismissToast();
+    setShowHelp(false);
+  }, [dismissToast]);
+
   const handleClose = useCallback(() => {
     dismissCoachMark();
     dismissToast();
@@ -83,16 +89,20 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
 
     if (!skeletonUrl || skeletonUrl.trim() === '') {
       setSkeletonError(true);
+      setSkeletonLoading(false);
       return;
     }
 
     setSkeletonError(false);
+    setSkeletonLoading(true);
+
     const testImg = new Image();
     testImg.onload = () => {
       setSkeletonError(false);
     };
     testImg.onerror = () => {
       setSkeletonError(true);
+      setSkeletonLoading(false);
     };
     testImg.src = getAssetUrl(skeletonUrl);
   }, [skeletonUrl]);
@@ -146,7 +156,7 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
     <div 
       className="lightbox-overlay lightbox-modal" 
       data-testid="lightbox-modal"
-      onPointerDown={dismissToast}
+      onPointerDown={handleBackdropPointerDown}
     >
       <div 
         ref={viewportRef}
@@ -183,22 +193,37 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
             <img 
               src={getAssetUrl(skeletonUrl)} 
               alt="放大的骨架疊加層" 
-              className={`lightbox-skeleton-overlay ${adjustMode === 'skeleton' ? 'adjusting' : ''} ${skeletonInverted ? 'inverted' : ''}`}
+              className={`lightbox-skeleton-overlay ${adjustMode === 'skeleton' ? 'adjusting' : ''} ${skeletonInverted ? 'inverted' : ''} ${skeletonLoading ? 'loading' : ''}`}
               style={{ 
-                opacity: skeletonVisible ? skeletonOpacity / 100 : 0,
+                opacity: (skeletonVisible && !skeletonLoading) ? skeletonOpacity / 100 : 0,
                 visibility: skeletonVisible ? 'visible' : 'hidden',
                 transform: `translate(${skeletonTransform.position.x}px, ${skeletonTransform.position.y}px) scale(${skeletonTransform.scale})`,
                 transformOrigin: 'center center',
                 filter: skeletonInverted ? 'invert(1) brightness(1.3)' : 'none',
                 outline: showSkeletonOutline ? '2.5px dashed var(--color-text-ink)' : 'none',
                 pointerEvents: 'none',
-                transition: isDragging ? 'none' : 'opacity 0.15s ease'
+                transition: isDragging ? 'none' : 'opacity 0.3s ease'
               }}
-              onError={() => setSkeletonError(true)}
+              onLoad={() => setSkeletonLoading(false)}
+              onError={() => { setSkeletonError(true); setSkeletonLoading(false); }}
               draggable="false"
             />
           )}
         </div>
+
+        {/* Loading Indicator — only controlled by skeletonLoading, NOT by skeletonVisible.
+            This ensures the overlay persists even if user toggles skeleton visibility mid-download. */}
+        {hasSkeleton && skeletonLoading && (
+          <div className="lightbox-skeleton-loader" id="lightbox-skeleton-loader">
+            <div className="loader-pencil-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="var(--color-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            </div>
+            <span>骨架載入中...</span>
+          </div>
+        )}
       </div>
 
       <LightboxToolbar 

@@ -68,6 +68,7 @@ describe('PhotoLightboxModal Component', () => {
     fireEvent.click(skeletonBtn);
 
     const overlayImg = screen.getByAltText('放大的骨架疊加層');
+    fireEvent.load(overlayImg);
     expect(overlayImg).toBeInTheDocument();
     expect(parseFloat(overlayImg.style.opacity)).toBeGreaterThan(0);
 
@@ -181,6 +182,7 @@ describe('LightboxModal – Layer Popovers & Outline Guard', () => {
     expect(skeletonPopover).toHaveClass('show');
 
     const overlayImg = screen.getByAltText('放大的骨架疊加層');
+    fireEvent.load(overlayImg);
     expect(overlayImg.style.filter).toContain('invert(1)');
 
     // Toggle invert

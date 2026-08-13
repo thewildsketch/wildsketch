@@ -40,10 +40,15 @@ describe('ReferenceStudio Component – Panel Labels & Angle Switching', () => {
   });
 
   it('shows empty photos-grid when no photos exist for an angle', () => {
-    const cat = animalsData.find(a => a.id === 'cat');
-    render(<ReferenceStudio angles={cat.angles} />);
+    const mockAngles = {
+      front: {
+        skeleton: "",
+        photos: []
+      }
+    };
+    render(<ReferenceStudio angles={mockAngles} />);
 
-    // cat has no photos – grid should be empty
+    // grid should be empty
     const grid = document.querySelector('.photos-grid');
     expect(grid).toBeInTheDocument();
     expect(grid.children.length).toBe(0);

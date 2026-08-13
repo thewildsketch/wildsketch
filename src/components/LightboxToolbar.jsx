@@ -42,6 +42,7 @@ export default function LightboxToolbar({
       id="lightbox-vertical-toolbar"
       data-testid="lightbox-vertical-toolbar"
       onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
     >
       {/* 頂部獨立按鈕 1：[✕] 離開 */}
       <button 
@@ -80,8 +81,21 @@ export default function LightboxToolbar({
             </div>
           )}
 
-          {/* Tooltip content */}
-          <div className={`lightbox-help-tooltip ${showHelp ? 'show' : ''}`} id="lightbox-help-tooltip">
+          <div 
+            className={`lightbox-help-tooltip ${showHelp ? 'show' : ''}`} 
+            id="lightbox-help-tooltip"
+            onClick={onToggleHelp}
+          >
+            <button 
+              className="tooltip-close-btn" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleHelp(e);
+              }} 
+              aria-label="關閉指南"
+            >
+              &times;
+            </button>
             <h4>速寫室操作指南</h4>
             <ul>
               <li><strong>畫布操作</strong>：左鍵拖曳可平移，滾動滾輪可縮放。</li>
