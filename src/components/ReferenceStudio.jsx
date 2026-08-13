@@ -35,7 +35,7 @@ export default function ReferenceStudio({ angles, activeAngle: propActiveAngle, 
       
       <p className="studio-guide-text" style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginTop: '8px', marginBottom: '20px', fontFamily: 'var(--font-sans)' }}>
         選擇視角後，點擊<strong>骨架</strong>或<strong>照片</strong>參考圖放大，<br />
-        於照片參考放大視窗內<strong>疊加骨架</strong>進行細部對照。<br />
+        照片視窗內骨架已對齊疊加，隨時可細部對照參考。<br />
         拿起畫筆，開啟你的速寫旅程吧！
       </p>
       

@@ -6,10 +6,12 @@ import PhotoLightboxModal from '../src/components/PhotoLightboxModal';
 import AnimalDetailView from '../src/components/AnimalDetailView';
 import { animalsData } from '../src/data/animalsData';
 
-// Helper: zoom indicator text
-const getZoomValue = () => {
-  const el = document.getElementById('lightbox-zoom-indicator');
-  return el ? parseInt(el.textContent) : NaN;
+// Helper: get scale from image stage style
+const getStageScale = () => {
+  const el = document.querySelector('.lightbox-image-stage');
+  if (!el) return NaN;
+  const match = el.style.transform.match(/scale\(([^)]+)\)/);
+  return match ? parseFloat(match[1]) : 1.0;
 };
 
 describe('PhotoLightboxModal Component', () => {
@@ -26,22 +28,23 @@ describe('PhotoLightboxModal Component', () => {
     expect(screen.getByTestId('lightbox-modal')).toBeInTheDocument();
     expect(screen.queryByText('透視放大鏡（Artist Viewport）')).not.toBeInTheDocument();
 
-    const initialZoom = getZoomValue();
+    const initialZoom = getStageScale();
 
-    // Click zoom-in once and verify indicator increases
+    // Click zoom-in once and verify stage scale increases
     const zoomInBtn = screen.getByRole('button', { name: '放大' });
     fireEvent.click(zoomInBtn);
-    expect(getZoomValue()).toBeGreaterThan(initialZoom);
+    expect(getStageScale()).toBeGreaterThan(initialZoom);
 
-    // 疊加骨架 button present
-    expect(screen.getByRole('button', { name: /疊加骨架/ })).toBeInTheDocument();
+    // [📷 照片圖層] and [🦴 骨架圖層] buttons present
+    expect(screen.getByRole('button', { name: /照片圖層/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /骨架圖層/ })).toBeInTheDocument();
 
-    // Close via the aria-label="關閉" button
-    fireEvent.click(screen.getByRole('button', { name: '關閉' }));
+    // Close via close button
+    fireEvent.click(screen.getByRole('button', { name: '離開速寫室' }));
     expect(handleClose).toHaveBeenCalled();
   });
 
-  it('handles zoom-out, reset, and opacity slider changes', () => {
+  it('handles zoom-out, reset, and photo/skeleton layer popovers', () => {
     render(
       <PhotoLightboxModal
         imageUrl="/cat_ref.jpg"
@@ -50,27 +53,35 @@ describe('PhotoLightboxModal Component', () => {
       />
     );
 
-    const initialZoom = getZoomValue();
+    const initialZoom = getStageScale();
 
     // Zoom out: value should decrease
     fireEvent.click(screen.getByRole('button', { name: '縮小' }));
-    expect(getZoomValue()).toBeLessThan(initialZoom);
+    expect(getStageScale()).toBeLessThan(initialZoom);
 
-    // Reset: back to 100
-    fireEvent.click(screen.getByRole('button', { name: '重置畫面' }));
-    expect(getZoomValue()).toBe(100);
+    // Global Reset: back to 1
+    fireEvent.click(screen.getByRole('button', { name: /全域總重置|重置/ }));
+    expect(getStageScale()).toBe(1);
 
-    // Overlay toggle + opacity slider
-    const toggleBtn = screen.getByRole('button', { name: /疊加骨架/ });
-    fireEvent.click(toggleBtn);
+    // Open skeleton layer popover by clicking skeleton layer button
+    const skeletonBtn = screen.getByRole('button', { name: /骨架圖層/ });
+    fireEvent.click(skeletonBtn);
 
     const overlayImg = screen.getByAltText('放大的骨架疊加層');
     expect(overlayImg).toBeInTheDocument();
     expect(parseFloat(overlayImg.style.opacity)).toBeGreaterThan(0);
 
-    const slider = screen.getByRole('slider');
-    fireEvent.change(slider, { target: { value: '80' } });
-    expect(parseFloat(overlayImg.style.opacity)).toBeCloseTo(0.8);
+    // Skeleton opacity slider
+    const skeletonSlider = screen.getByTitle(/調整骨架不透明度/);
+    fireEvent.change(skeletonSlider, { target: { value: '65' } });
+    expect(parseFloat(overlayImg.style.opacity)).toBeCloseTo(0.65);
+
+    // Skeleton dashed outline shown when in skeleton adjustMode
+    expect(overlayImg.style.outline).toContain('dashed');
+
+    // Click skeleton button again to close popover and exit skeleton mode
+    fireEvent.click(skeletonBtn);
+    expect(overlayImg.style.outline).toBe('none');
   });
 
   it('renders fallback for broken main image and hides skeleton overlay on skeleton error', () => {
@@ -84,10 +95,6 @@ describe('PhotoLightboxModal Component', () => {
 
     // Main image missing → fallback box
     expect(screen.getByTestId('img-fallback-box')).toBeInTheDocument();
-
-    // Toggle overlay on
-    const toggleBtn = screen.getByRole('button', { name: /疊加骨架/ });
-    fireEvent.click(toggleBtn);
 
     const overlayImg = screen.getByAltText('放大的骨架疊加層');
     expect(overlayImg).toBeInTheDocument();
@@ -113,23 +120,23 @@ describe('SkeletonLightboxModal Component', () => {
     );
 
     expect(screen.getByTestId('lightbox-modal')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /疊加骨架/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /照片圖層/ })).not.toBeInTheDocument();
 
-    const initialZoom = getZoomValue();
+    const initialZoom = getStageScale();
     fireEvent.click(screen.getByRole('button', { name: '放大' }));
-    expect(getZoomValue()).toBeGreaterThan(initialZoom);
+    expect(getStageScale()).toBeGreaterThan(initialZoom);
 
     fireEvent.click(screen.getByRole('button', { name: '縮小' }));
-    fireEvent.click(screen.getByRole('button', { name: '重置畫面' }));
-    expect(getZoomValue()).toBe(100);
+    fireEvent.click(screen.getByRole('button', { name: /全域總重置|重置/ }));
+    expect(getStageScale()).toBe(1);
 
-    fireEvent.click(screen.getByRole('button', { name: '關閉' }));
+    fireEvent.click(screen.getByRole('button', { name: '離開速寫室' }));
     expect(handleClose).toHaveBeenCalled();
   });
 });
 
-describe('LightboxModal – 調整骨架 interaction guard', () => {
-  it('調整骨架 is disabled when 疊加骨架 is unchecked', () => {
+describe('LightboxModal – Layer Popovers & Outline Guard', () => {
+  it('toggles photo popover and controls photo visibility & opacity', () => {
     render(
       <PhotoLightboxModal
         imageUrl="/cat_ref.jpg"
@@ -137,10 +144,28 @@ describe('LightboxModal – 調整骨架 interaction guard', () => {
         onClose={vi.fn()}
       />
     );
-    expect(screen.getByRole('button', { name: /調整骨架位置/ })).toBeDisabled();
+
+    const photoLayerBtn = screen.getByRole('button', { name: /照片圖層/ });
+    fireEvent.click(photoLayerBtn);
+
+    // Photo popover is shown (.show class on popover)
+    const photoPopover = document.getElementById('v-layer-photo-popover');
+    expect(photoPopover).toHaveClass('show');
+
+    // Change photo opacity
+    const photoSlider = screen.getByTitle(/調整照片不透明度/);
+    fireEvent.change(photoSlider, { target: { value: '50' } });
+
+    const photoBaseImg = screen.getByAltText('放大的參考照片');
+    expect(photoBaseImg.parentElement.style.opacity).toBe('0.5');
+
+    // Toggle photo visibility
+    const photoEyeBtn = document.getElementById('v-photo-toggle-btn');
+    fireEvent.click(photoEyeBtn);
+    expect(photoBaseImg.parentElement.style.opacity).toBe('0');
   });
 
-  it('調整骨架 becomes enabled after 疊加骨架 is checked', () => {
+  it('toggles skeleton popover and controls skeleton visibility & color invert', () => {
     render(
       <PhotoLightboxModal
         imageUrl="/cat_ref.jpg"
@@ -148,31 +173,26 @@ describe('LightboxModal – 調整骨架 interaction guard', () => {
         onClose={vi.fn()}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /疊加骨架/ }));
-    expect(screen.getByRole('button', { name: /調整骨架位置/ })).not.toBeDisabled();
-  });
 
-  it('對比反相 button is disabled when 疊加骨架 is unchecked', () => {
-    render(
-      <PhotoLightboxModal
-        imageUrl="/cat_ref.jpg"
-        skeletonUrl="/cat_skeleton.png"
-        onClose={vi.fn()}
-      />
-    );
-    expect(screen.getByRole('button', { name: /切換骨架顏色/ })).toBeDisabled();
-  });
+    const skeletonLayerBtn = screen.getByRole('button', { name: /骨架圖層/ });
+    fireEvent.click(skeletonLayerBtn);
 
-  it('對比反相 button becomes enabled after 疊加骨架 is checked', () => {
-    render(
-      <PhotoLightboxModal
-        imageUrl="/cat_ref.jpg"
-        skeletonUrl="/cat_skeleton.png"
-        onClose={vi.fn()}
-      />
-    );
-    fireEvent.click(screen.getByRole('button', { name: /疊加骨架/ }));
-    expect(screen.getByRole('button', { name: /切換骨架顏色/ })).not.toBeDisabled();
+    const skeletonPopover = document.getElementById('v-layer-skeleton-popover');
+    expect(skeletonPopover).toHaveClass('show');
+
+    const overlayImg = screen.getByAltText('放大的骨架疊加層');
+    expect(overlayImg.style.filter).toContain('invert(1)');
+
+    // Toggle invert
+    const invertBtn = document.getElementById('lightbox-invert-btn');
+    fireEvent.click(invertBtn);
+    expect(overlayImg.style.filter).toBe('none');
+
+    // Toggle skeleton visibility off -> outline must disappear
+    const skeletonEyeBtn = document.getElementById('v-skeleton-toggle-btn');
+    fireEvent.click(skeletonEyeBtn);
+    expect(overlayImg.style.opacity).toBe('0');
+    expect(overlayImg.style.outline).toBe('none');
   });
 });
 
@@ -195,11 +215,11 @@ describe('LightboxModal Component Integration', () => {
     const lightboxModal = screen.getByTestId('lightbox-modal');
     expect(lightboxModal).toBeInTheDocument();
 
-    // In skeleton-only mode, no 疊加骨架 button
-    expect(within(lightboxModal).queryByRole('button', { name: /疊加骨架/ })).not.toBeInTheDocument();
+    // In skeleton-only mode, no layers group
+    expect(within(lightboxModal).queryByRole('button', { name: /照片圖層/ })).not.toBeInTheDocument();
 
-    // Close via fireEvent (not .click()) to trigger React synthetic event
-    fireEvent.click(within(lightboxModal).getByRole('button', { name: '關閉' }));
+    // Close via close button
+    fireEvent.click(within(lightboxModal).getByRole('button', { name: '離開速寫室' }));
     expect(screen.queryByTestId('lightbox-modal')).not.toBeInTheDocument();
   });
 });

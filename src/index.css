@@ -1133,8 +1133,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 120px;
-  /* Safe space for floating toolbar, aligns image higher */
+  padding-bottom: 0;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
@@ -1232,19 +1231,30 @@ main {
 }
 
 /* Floating Right Controls Panel (Vertical stack under top-right) */
-.lightbox-right-controls {
+/* Right-Side Vertical Studio Toolbar (Top-Aligned with Grouped Capsules) */
+.lightbox-vertical-toolbar {
   position: absolute;
-  top: 30px;
-  right: 30px;
+  top: 24px;
+  top: max(24px, env(safe-area-inset-top, 0px));
+  right: 24px;
+  right: max(24px, env(safe-area-inset-right, 0px));
+  z-index: 1100;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  z-index: 1010;
+  gap: 14px;
+  pointer-events: auto;
 }
 
-/* Shared style for Close and Side Panel controls */
-.lightbox-close-btn, .lightbox-side-btn {
+.v-toolbar-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Standalone Circular Action Buttons ([x], [?], [↺]) */
+.lightbox-circle-btn {
   background: rgba(251, 251, 250, 0.95);
   border: 1.5px solid var(--color-text-ink);
   width: 44px;
@@ -1255,117 +1265,302 @@ main {
   justify-content: center;
   align-items: center;
   color: var(--color-text-ink);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
   transition: all 0.2s ease;
+  outline: none;
   padding: 0;
-  box-sizing: border-box;
 }
 
-.lightbox-close-btn {
-  font-size: 1.2rem;
-}
-
-.lightbox-close-btn:hover {
-  transform: scale(1.1) rotate(90deg);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.lightbox-side-btn:hover {
-  background-color: var(--color-accent-light);
-  border-color: var(--color-accent);
-  transform: scale(1.1);
-}
-
-.lightbox-side-btn svg {
+.lightbox-circle-btn svg {
   width: 20px;
   height: 20px;
   stroke: var(--color-text-ink);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   transition: stroke 0.15s ease;
 }
 
-.lightbox-side-btn:hover svg {
+.lightbox-circle-btn:hover {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: scale(1.08);
+}
+
+.lightbox-circle-btn:hover svg {
   stroke: var(--color-accent);
 }
 
-.lightbox-side-btn.active {
+.lightbox-circle-btn.close-btn:hover {
+  background: #FEE2E2 !important;
+  border-color: #EF4444 !important;
+  color: #EF4444 !important;
+  transform: scale(1.08) rotate(90deg);
+}
+
+.lightbox-circle-btn.close-btn:hover svg {
+  stroke: #EF4444 !important;
+}
+
+.lightbox-circle-btn.reset-btn:hover {
+  background: var(--color-accent-light) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+  transform: scale(1.08) rotate(-45deg);
+}
+
+.lightbox-circle-btn.reset-btn:hover svg {
+  stroke: var(--color-accent) !important;
+}
+
+.lightbox-circle-btn.active {
   background: var(--color-accent) !important;
   border-color: var(--color-accent) !important;
+  color: #fff !important;
 }
 
-.lightbox-side-btn.active svg {
-  stroke: var(--color-bg-canvas) !important;
+.lightbox-circle-btn.active svg {
+  stroke: #fff !important;
 }
 
-/* Ensure all toolbar button SVGs are consistently sized and styled */
-.toolbar-btn svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: var(--color-text-ink);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex-shrink: 0;
-  transition: stroke 0.15s ease, fill 0.15s ease;
+/* Grouped Pill/Capsule Container for Zoom and Layer controls */
+.v-toolbar-group {
+  background: rgba(251, 251, 250, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid var(--color-text-ink);
+  border-radius: 30px;
+  padding: 8px 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  position: relative;
+  z-index: 1120;
 }
 
-.toolbar-btn:hover svg {
-  stroke: var(--color-accent);
-}
-
-.toolbar-btn.active svg {
-  stroke: var(--color-bg-canvas) !important;
-}
-
-.toolbar-btn:disabled svg {
-  stroke: var(--color-border-sketch) !important;
-  opacity: 0.35;
-}
-/* Inverted adjusting dashed outline */
-.lightbox-skeleton-overlay.adjusting {
-  outline: 2.5px dashed var(--color-text-ink) !important;
-}
-
-
-#lightbox-zoom-indicator {
-  font-family: var(--font-sketch) !important;
-}
-/* Floating Studio Toolbar Wrapper */
-.lightbox-toolbar-container {
-  position: absolute;
-  bottom: 55px; /* Raised for Safari/iOS navigation bars */
-  bottom: max(55px, calc(env(safe-area-inset-bottom, 0px) + 25px));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1010;
+/* Round Toolbar Button Design */
+.toolbar-btn {
+  background: #FEFDF9;
+  border: 1.5px solid var(--color-text-ink);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: auto;
+  color: var(--color-text-ink);
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  outline: none;
+  padding: 0;
 }
 
-/* Floating Studio Toolbar */
-.lightbox-toolbar {
-  background: rgba(251, 251, 250, 0.95);
-  border: 1.5px solid var(--color-text-ink);
-  padding: 8px 18px;
-  border-radius: 20px;
+.toolbar-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--color-text-ink);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.15s ease;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background-color: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: scale(1.08);
+}
+
+.toolbar-btn:hover:not(:disabled) svg {
+  stroke: var(--color-accent);
+}
+
+.toolbar-btn.active {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
+}
+
+.toolbar-btn.active svg {
+  stroke: #fff !important;
+}
+
+.toolbar-btn.editing {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 2.5px rgba(194, 94, 56, 0.45), 0 3px 8px rgba(0,0,0,0.15);
+  transform: scale(1.05);
+}
+
+.toolbar-btn.editing svg {
+  stroke: #fff !important;
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.v-toolbar-zoom-indicator {
+  font-family: var(--font-sketch);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-ink);
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+  min-height: 24px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  max-width: 95vw;
-  flex-wrap: nowrap;
+  justify-content: center;
+  transition: color 0.15s ease;
+  line-height: 1;
+  transform: translateY(1.5px);
+}
+
+.v-toolbar-zoom-indicator:hover {
+  color: var(--color-accent);
+}
+
+/* Single-Row Layer Popover Capsule (Horizontal layout on the left of toolbar) */
+.v-layer-popover-row {
+  position: absolute;
+  right: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+  background: rgba(251, 251, 250, 0.96);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid var(--color-text-ink);
+  border-radius: 28px;
+  padding: 6px 20px 6px 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 1120;
+  pointer-events: none;
   white-space: nowrap;
 }
 
-/* Toolbar Rows for responsive layout */
-.toolbar-row {
+.v-layer-popover-row > * {
+  position: relative;
+  z-index: 2;
+}
+
+.v-layer-popover-row.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+.v-layer-popover-row::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%) translateX(-6px) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: rgba(251, 251, 250, 0.96);
+  border-top: 1.5px solid var(--color-text-ink);
+  border-right: 1.5px solid var(--color-text-ink);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Floating overall instructions tooltip card */
+.lightbox-help-tooltip {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  right: auto;
+  transform: translateY(-10px);
+  width: 300px;
+  background: #FEFDF9; /* Cream paper color */
+  border: 1.5px solid var(--color-text-ink);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 1110;
+  pointer-events: none;
+  white-space: normal;
+  text-align: left;
+}
+
+.lightbox-help-tooltip h4 {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--color-text-ink);
+  margin-bottom: 8px;
+  border-bottom: 1.5px dashed var(--color-border-sketch);
+  padding-bottom: 6px;
+  font-weight: 700;
+}
+
+.lightbox-help-tooltip ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: nowrap;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inline-help-svg {
+  width: 16px;
+  height: 16px;
+  overflow: visible !important;
+  vertical-align: -0.2em;
+  stroke: var(--color-text-ink);
+  fill: none;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: inline-block;
+  margin: 0 4px 0 2px;
+}
+
+.lightbox-help-tooltip ul > li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.lightbox-help-tooltip ul > li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+/* Show rule for overall help tooltip (Click to Toggle) */
+.lightbox-help-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* First-time onboarding coach mark speech bubble */
@@ -1380,13 +1575,13 @@ main {
   border-radius: 8px;
   padding: 10px 30px 10px 14px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
-  color: var(--color-text-ink);
+  color: var(--color-accent);
   font-family: var(--font-sans);
   font-size: 0.85rem;
   font-weight: 500;
   line-height: 1.45;
   z-index: 1025;
-  display: none; /* Controlled by React state */
+  display: none;
   pointer-events: auto;
   white-space: normal;
   text-align: left;
@@ -1425,8 +1620,6 @@ main {
   color: var(--color-accent);
 }
 
-
-
 @keyframes coachMarkPulse {
   0% {
     opacity: 0;
@@ -1438,165 +1631,10 @@ main {
   }
 }
 
-/* Floating overall instructions tooltip card */
-.lightbox-help-tooltip {
-  position: absolute;
-  top: 0;
-  right: calc(100% + 15px);
-  transform: translateX(-10px);
-  width: 335px;
-  background: #FEFDF9;
-  /* Cream paper color */
-  border: 1.5px solid var(--color-text-ink);
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
-  color: var(--color-text-muted);
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  line-height: 1.5;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  z-index: 1020;
-  pointer-events: none;
-  white-space: normal;
-  /* Allow text wrapping inside tooltip */
-  text-align: left;
-}
-
-.lightbox-help-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 22px;
-  left: 100%;
-  transform: translateY(-50%) translateX(-6px) rotate(45deg);
-  width: 12px;
-  height: 12px;
-  background: #FEFDF9;
-  border-top: 1.5px solid var(--color-text-ink);
-  border-right: 1.5px solid var(--color-text-ink);
-}
-
-.lightbox-help-tooltip h4 {
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  color: var(--color-text-ink);
-  margin-bottom: 8px;
-  border-bottom: 1.5px dashed var(--color-border-sketch);
-  padding-bottom: 6px;
-  font-weight: 700;
-}
-
-.lightbox-help-tooltip ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Orange dots only for ul > li to prevent ol > li duplication */
-.lightbox-help-tooltip ul>li {
-  position: relative;
-  padding-left: 14px;
-}
-
-.lightbox-help-tooltip ul>li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: var(--color-accent);
-  font-weight: bold;
-}
-
-/* Explicit show trigger for overall help tooltip */
-.lightbox-help-tooltip.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-
-/* Inline SVG styling in help guides */
-.inline-help-svg {
-  width: 16px;
-  height: 16px;
-  vertical-align: -0.2em;
-  stroke: var(--color-text-ink);
-  fill: none;
-  stroke-width: 2px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  display: inline-block;
-}
-
 .toolbar-divider {
   width: 1px;
   height: 24px;
   background-color: var(--color-border-sketch);
-}
-
-.toolbar-btn,
-.reset-btn {
-  background: none;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--color-text-ink);
-  font-weight: bold;
-  font-size: 1.2rem;
-  border: 1px solid var(--color-border-sketch);
-  background-color: var(--color-bg-canvas);
-  transition: all 0.15s ease;
-}
-
-.reset-btn {
-  width: auto;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: 18px;
-  font-size: 0.95rem;
-  font-family: var(--font-sans);
-  font-weight: 600;
-}
-
-.toolbar-btn:hover,
-.reset-btn:hover {
-  background-color: var(--color-accent-light);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  transform: translateY(-2px);
-}
-
-.toolbar-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.toolbar-btn.active {
-  background-color: var(--color-accent) !important;
-  border-color: var(--color-accent) !important;
-  color: #fff !important;
-}
-
-.toolbar-btn.active svg {
-  stroke: var(--color-bg-canvas) !important;
-}
-
-.toolbar-text {
-  font-family: var(--font-sketch);
-  font-size: 1.25rem;
-  font-style: italic;
-  font-weight: bold;
-  color: var(--color-accent);
 }
 
 
@@ -1736,45 +1774,47 @@ footer {
   transition: all 0.2s ease;
 }
 
+/* Lightbox Toast Message (Expands leftwards from vertical toolbar) */
 .lightbox-toast-msg {
   position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: var(--color-bg-card);
+  right: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  background: rgba(251, 251, 250, 0.96);
+  backdrop-filter: blur(8px);
   border: 1.5px solid var(--color-accent);
-  border-radius: 6px;
+  border-radius: 20px;
   color: var(--color-accent);
   font-family: var(--font-sans);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 14px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 12px rgba(30, 27, 24, 0.12);
-  z-index: 200;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+  z-index: 1130;
 }
 
-.lightbox-toast-msg::before {
+.lightbox-toast-msg::after {
   content: '';
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-4px) rotate(45deg);
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%) translateX(-5px) rotate(45deg);
   width: 8px;
   height: 8px;
-  background: var(--color-bg-card);
+  background: rgba(251, 251, 250, 0.96);
+  border-top: 1.5px solid var(--color-accent);
   border-right: 1.5px solid var(--color-accent);
-  border-bottom: 1.5px solid var(--color-accent);
 }
 
 .lightbox-toast-msg.show {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(-50%) translateX(0);
 }
 
 .skeleton-canvas-box:hover {
@@ -2162,60 +2202,42 @@ footer {
 
 
   /* Lightbox Mobile Enhancements */
-  .lightbox-right-controls {
+  .lightbox-vertical-toolbar {
     top: max(16px, env(safe-area-inset-top, 0px)) !important;
-    right: 16px !important;
-    gap: 10px !important;
-    z-index: 1200 !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    gap: 8px !important;
   }
-
-  .lightbox-close-btn, .lightbox-side-btn {
-    width: 40px !important;
-    height: 40px !important;
-    background: rgba(251, 251, 250, 0.95) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  .lightbox-circle-btn {
+    width: 36px !important;
+    height: 36px !important;
   }
-
-  .lightbox-viewport {
-    padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px)) !important;
+  .v-toolbar-group {
+    padding: 4px 3px !important;
+    gap: 5px !important;
+    border-radius: 20px !important;
   }
-
-  .lightbox-toolbar-container {
-    bottom: max(36px, calc(env(safe-area-inset-bottom, 0px) + 20px)) !important;
-    width: auto !important;
-    max-width: 92vw !important;
-    height: auto !important;
+  .toolbar-btn {
+    width: 32px !important;
+    height: 32px !important;
   }
-
-  .lightbox-toolbar {
-    width: auto !important;
-    max-width: 100% !important;
+  .v-layer-popover-row {
+    right: calc(100% + 8px) !important;
+    padding: 4px 8px !important;
+    gap: 6px !important;
   }
-
   .lightbox-help-tooltip {
-    right: calc(100% + 12px) !important;
-    left: auto !important;
-    top: 0 !important;
-    transform: translateX(10px) !important;
-    width: calc(100vw - 88px) !important;
-    max-width: 320px !important;
-  }
-
-  .lightbox-help-tooltip::after {
-    display: block !important;
-    top: 22px !important;
-    left: 100% !important;
+    position: fixed !important;
+    top: 16px !important;
+    left: 50% !important;
     right: auto !important;
-    transform: translateY(-50%) translateX(-6px) rotate(45deg) !important;
-    border-top: 1.5px solid var(--color-text-ink) !important;
-    border-right: 1.5px solid var(--color-text-ink) !important;
-    border-left: none !important;
-    border-bottom: none !important;
-    background: #FEFDF9 !important;
+    transform: translateX(-50%) translateY(-10px) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 380px !important;
+    z-index: 1210 !important;
   }
 
   .lightbox-help-tooltip.show {
-    transform: translateX(0) !important;
+    transform: translateX(-50%) translateY(0) !important;
   }
 
   .lightbox-coach-mark {
@@ -2226,6 +2248,18 @@ footer {
     width: calc(100vw - 88px) !important;
     max-width: 250px !important;
     animation: coachMarkPulseMobile 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important;
+  }
+
+  .lightbox-coach-mark::after {
+    top: 22px !important;
+    left: 100% !important;
+    right: auto !important;
+    transform: translateY(-50%) translateX(-6px) rotate(45deg) !important;
+    border-top: 1.5px solid var(--color-accent) !important;
+    border-right: 1.5px solid var(--color-accent) !important;
+    border-left: none !important;
+    border-bottom: none !important;
+    background: #FEFDF9 !important;
   }
 
   .lightbox-coach-mark::after {
