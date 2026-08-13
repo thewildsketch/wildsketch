@@ -6,9 +6,11 @@ import AboutMeBlock from './home/AboutMeBlock';
 export default function HomeView({ animals, onAnimalSelect }) {
   const [filter, setFilter] = useState('all');
 
+  const publishedAnimals = (animals || []).filter((a) => a.status === 'published');
+
   const filteredAnimals = filter === 'all'
-    ? animals
-    : animals.filter((a) => a.postureType === filter);
+    ? publishedAnimals
+    : publishedAnimals.filter((a) => a.postureType === filter);
 
   return (
     <div className="home-view-container" data-testid="home-view">

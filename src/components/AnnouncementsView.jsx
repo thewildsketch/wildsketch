@@ -7,7 +7,9 @@ export default function AnnouncementsView() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [expandedIds, setExpandedIds] = useState({});
 
-  if (!announcementsData || announcementsData.length === 0) {
+  const availableAnnouncements = (announcementsData || []).filter((a) => a.status === 'published');
+
+  if (availableAnnouncements.length === 0) {
     return (
       <div className="announcements-view" style={{ marginTop: '40px' }} data-testid="announcements-view">
         <div className="ann-page-empty">
@@ -18,7 +20,7 @@ export default function AnnouncementsView() {
   }
 
   // Sort: pinned first, then by date descending
-  const sorted = [...announcementsData].sort((a, b) => {
+  const sorted = [...availableAnnouncements].sort((a, b) => {
     if (b.isPinned !== a.isPinned) return (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
     return new Date(b.date) - new Date(a.date);
   });

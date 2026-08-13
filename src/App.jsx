@@ -68,7 +68,7 @@ export default function App() {
     navigateTo('articles', null, articleId);
   };
 
-  const selectedAnimal = animalsData.find((a) => a.id === selectedAnimalId);
+  const selectedAnimal = animalsData.find((a) => a.id === selectedAnimalId && a.status === 'published');
 
   return (
     <>

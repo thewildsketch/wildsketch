@@ -3,8 +3,11 @@ import { animalsData } from '../data/animalsData';
 import { articlesData } from '../data/articlesData';
 
 export default function AnimalInsights({ animal, onNavigateAnimal, onNavigateArticle }) {
-  const similarAnimalsList = animalsData.filter(a => animal.similarAnimalIds && animal.similarAnimalIds.includes(a.id));
-  const relatedArticlesList = articlesData.filter(art => art.tags && art.tags.includes(animal.id));
+  const publishedAnimals = (animalsData || []).filter(a => a.status === 'published');
+  const publishedArticles = (articlesData || []).filter(art => art.status === 'published');
+
+  const similarAnimalsList = publishedAnimals.filter(a => animal.similarAnimalIds && animal.similarAnimalIds.includes(a.id));
+  const relatedArticlesList = publishedArticles.filter(art => art.tags && art.tags.includes(animal.id));
 
   const hasLinks = similarAnimalsList.length > 0 || relatedArticlesList.length > 0;
 

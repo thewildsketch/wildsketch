@@ -2,13 +2,15 @@ import React, { useEffect } from 'react';
 import { articlesData } from '../data/articlesData';
 
 export default function ArticlesView({ activeArticleId, onArticleSelect }) {
+  const availableArticles = (articlesData || []).filter((art) => art.status === 'published');
+
   const handleExpandToggle = (id) => {
     const nextId = activeArticleId === id ? null : id;
     if (onArticleSelect) onArticleSelect(nextId);
   };
 
   useEffect(() => {
-    if (activeArticleId) {
+    if (activeArticleId && availableArticles.some((a) => a.id === activeArticleId)) {
       const el = document.getElementById(activeArticleId);
       if (el) {
         const timer = setTimeout(() => {
@@ -17,17 +19,17 @@ export default function ArticlesView({ activeArticleId, onArticleSelect }) {
         return () => clearTimeout(timer);
       }
     }
-  }, [activeArticleId]);
+  }, [activeArticleId, availableArticles]);
 
   return (
     <div className="articles-view" data-testid="articles-view" style={{ marginTop: '25px' }}>
-      {(!articlesData || articlesData.length === 0) ? (
+      {(!availableArticles || availableArticles.length === 0) ? (
         <div className="ann-page-empty">
           目前尚無專題文章
         </div>
       ) : (
       <div className="articles-list">
-        {articlesData.map((article) => {
+        {availableArticles.map((article) => {
           const isExpanded = activeArticleId === article.id;
           return (
             <article key={article.id} className="article-card" id={article.id}>

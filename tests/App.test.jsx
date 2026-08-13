@@ -41,6 +41,12 @@ describe('App Shell Navigation & URL Routing', () => {
     expect(screen.getByText('Cat')).toBeInTheDocument();
   });
 
+  it('should not render animal detail view if animal is not published or does not exist', () => {
+    window.history.pushState(null, '', '/animal/non_existent_or_draft');
+    render(<App />);
+    expect(screen.queryByTestId('detail-view-full')).not.toBeInTheDocument();
+  });
+
   it('should handle popstate event for browser back/forward navigation', () => {
     render(<App />);
     expect(screen.getByTestId('home-view')).toBeInTheDocument();

@@ -2,6 +2,8 @@ import React from 'react';
 import ImageWithFallback from './common/ImageWithFallback';
 
 export default function PhotoPanel({ photos }) {
+  const visiblePhotos = (photos || []).filter(p => typeof p === 'string' || p?.status === 'published');
+
   const renderPhotoAttribution = (photo) => {
     if (typeof photo === 'string') return null;
 
@@ -43,7 +45,7 @@ export default function PhotoPanel({ photos }) {
     <div className="photo-panel">
       <h4 className="studio-sub-title">照片參考</h4>
       <div className="photos-grid">
-        {photos.map((photo, index) => {
+        {visiblePhotos.map((photo, index) => {
           const photoUrl = typeof photo === 'string' ? photo : (photo?.url || '');
           const photoId = typeof photo === 'string' ? '' : (photo?.id || '');
           const photoSkeleton = typeof photo === 'string' ? null : (photo?.skeleton || null);
