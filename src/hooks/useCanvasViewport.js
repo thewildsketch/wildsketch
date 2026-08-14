@@ -158,26 +158,46 @@ export default function useCanvasViewport(options = {}) {
   }, [updateActiveScale]);
 
   const reset = useCallback(() => {
-    canvasTransformRef.current = DEFAULT_TRANSFORM;
-    photoTransformRef.current = DEFAULT_TRANSFORM;
-    skeletonTransformRef.current = DEFAULT_TRANSFORM;
+    // Cancel any in-flight drag so dragStartRef doesn't become stale after the transforms reset
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      dragStartRef.current = { x: 0, y: 0 };
+    }
+    const freshTransform = { scale: 1, position: { x: 0, y: 0 } };
+    canvasTransformRef.current = freshTransform;
+    photoTransformRef.current = freshTransform;
+    skeletonTransformRef.current = freshTransform;
     adjustModeRef.current = 'sync';
-    setCanvasTransform(DEFAULT_TRANSFORM);
-    setPhotoTransform(DEFAULT_TRANSFORM);
-    setSkeletonTransform(DEFAULT_TRANSFORM);
+    setCanvasTransform(freshTransform);
+    setPhotoTransform(freshTransform);
+    setSkeletonTransform(freshTransform);
     setAdjustModeState('sync');
   }, []);
 
   const resetLayer = useCallback((layer) => {
+    const freshTransform = { scale: 1, position: { x: 0, y: 0 } };
+    // Cancel any in-flight drag when the active layer is being reset to prevent
+    // dragStartRef from going stale (which would cause a position jump on next move)
+    const mode = adjustModeRef.current;
+    const isActiveLayer =
+      (layer === 'skeleton' && mode === 'skeleton') ||
+      (layer === 'photo' && mode === 'photo') ||
+      (layer === 'canvas' && mode === 'sync');
+    if (isActiveLayer && isDraggingRef.current) {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      dragStartRef.current = { x: 0, y: 0 };
+    }
     if (layer === 'skeleton') {
-      skeletonTransformRef.current = DEFAULT_TRANSFORM;
-      setSkeletonTransform(DEFAULT_TRANSFORM);
+      skeletonTransformRef.current = freshTransform;
+      setSkeletonTransform(freshTransform);
     } else if (layer === 'photo') {
-      photoTransformRef.current = DEFAULT_TRANSFORM;
-      setPhotoTransform(DEFAULT_TRANSFORM);
+      photoTransformRef.current = freshTransform;
+      setPhotoTransform(freshTransform);
     } else if (layer === 'canvas') {
-      canvasTransformRef.current = DEFAULT_TRANSFORM;
-      setCanvasTransform(DEFAULT_TRANSFORM);
+      canvasTransformRef.current = freshTransform;
+      setCanvasTransform(freshTransform);
     }
   }, []);
 

@@ -58,7 +58,6 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
 
   const handleBackdropPointerDown = useCallback(() => {
     dismissToast();
-    setShowHelp(false);
   }, [dismissToast]);
 
   const handleClose = useCallback(() => {
@@ -109,11 +108,19 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
 
   const hasSkeleton = Boolean(skeletonUrl && !skeletonError);
 
+  const adjustModeRef = useRef(adjustMode); // shadows the one in hook for closure-safe reads
+
+  // Keep local ref in sync with the hook's state for closure-safe toggle reads
+  useEffect(() => {
+    adjustModeRef.current = adjustMode;
+  }, [adjustMode]);
+
   const handleTogglePhotoLayer = useCallback((e) => {
     if (e && e.stopPropagation) e.stopPropagation();
     dismissToast();
-    setAdjustMode(adjustMode === 'photo' ? 'sync' : 'photo');
-  }, [adjustMode, setAdjustMode, dismissToast]);
+    // Read adjustModeRef instead of stale closure value to avoid batch-render races
+    setAdjustMode(adjustModeRef.current === 'photo' ? 'sync' : 'photo');
+  }, [setAdjustMode, dismissToast]);
 
   const handleToggleSkeletonLayer = useCallback((e) => {
     if (e && e.stopPropagation) e.stopPropagation();
@@ -122,8 +129,9 @@ export default function PhotoLightboxModal({ imageUrl, skeletonUrl, onClose }) {
       return;
     }
     dismissToast();
-    setAdjustMode(adjustMode === 'skeleton' ? 'sync' : 'skeleton');
-  }, [hasSkeleton, adjustMode, setAdjustMode, triggerToast, dismissToast]);
+    // Read adjustModeRef instead of stale closure value to avoid batch-render races
+    setAdjustMode(adjustModeRef.current === 'skeleton' ? 'sync' : 'skeleton');
+  }, [hasSkeleton, setAdjustMode, triggerToast, dismissToast]);
 
   const handleGlobalReset = useCallback(() => {
     dismissToast();

@@ -84,7 +84,6 @@ export default function LightboxToolbar({
           <div 
             className={`lightbox-help-tooltip ${showHelp ? 'show' : ''}`} 
             id="lightbox-help-tooltip"
-            onClick={onToggleHelp}
           >
             <button 
               className="tooltip-close-btn" 
