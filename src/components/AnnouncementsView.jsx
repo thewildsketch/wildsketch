@@ -11,7 +11,7 @@ export default function AnnouncementsView() {
 
   if (availableAnnouncements.length === 0) {
     return (
-      <div className="announcements-view" style={{ marginTop: '40px' }} data-testid="announcements-view">
+      <div className="announcements-view" data-testid="announcements-view">
         <div className="ann-page-empty">
           目前尚無公告
         </div>
@@ -41,7 +41,8 @@ export default function AnnouncementsView() {
   };
 
   return (
-    <div className="announcements-view" style={{ marginTop: '10px' }} data-testid="announcements-view">
+    <div className="announcements-view" data-testid="announcements-view">
+
       <div id="announcements-page-container">
         {visibleItems.map((ann) => {
           const hasContent = Boolean(ann.content);

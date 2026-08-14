@@ -27,6 +27,11 @@
   padding: 0;
 }
 
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
+
 body {
   background-color: var(--color-bg-canvas);
   background-image: var(--studio-grid);
@@ -38,6 +43,7 @@ body {
   flex-direction: column;
   overflow-x: hidden;
 }
+
 
 /* Core Layout Header */
 header {
@@ -173,6 +179,8 @@ main {
   margin: 0 auto;
   padding: 40px 20px 30px 20px;
 }
+
+
 
 
 
@@ -1053,8 +1061,13 @@ main {
 .articles-view {
   animation: fadeIn 0.4s ease;
   max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 20px auto 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .article-card {
   background: var(--color-bg-card);
@@ -1981,8 +1994,13 @@ footer {
 .announcements-view {
   animation: fadeIn 0.4s ease;
   max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 20px auto 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
+
 
 
 

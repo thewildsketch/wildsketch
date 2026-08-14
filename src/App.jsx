@@ -60,6 +60,11 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [activeView, selectedAnimalId, activeArticleId]);
+
+
   const handleAnimalSelect = (id) => {
     navigateTo('detail', id, null);
   };

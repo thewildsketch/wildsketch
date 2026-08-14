@@ -22,7 +22,8 @@ export default function ArticlesView({ activeArticleId, onArticleSelect }) {
   }, [activeArticleId, availableArticles]);
 
   return (
-    <div className="articles-view" data-testid="articles-view" style={{ marginTop: '25px' }}>
+    <div className="articles-view" data-testid="articles-view">
+
       {(!availableArticles || availableArticles.length === 0) ? (
         <div className="ann-page-empty">
           目前尚無專題文章
