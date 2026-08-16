@@ -41,7 +41,7 @@ export default function Header({ activeView, onViewChange }) {
           公告
         </button>
         <button
-          className={`nav-btn ${activeView === 'articles' ? 'active' : ''}`}
+          className={`nav-btn ${activeView === 'articles' || activeView === 'article-detail' ? 'active' : ''}`}
           onClick={() => handleNavClick('articles')}
         >
           專題文章

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import HomeView from './components/HomeView';
 import ArticlesView from './components/ArticlesView';
+import ArticleDetailView from './components/ArticleDetailView';
 import AnnouncementsView from './components/AnnouncementsView';
 import AnimalDetailView from './components/AnimalDetailView';
 import Footer from './components/Footer';
@@ -15,7 +16,7 @@ function parsePath(pathname) {
   }
   if (pathname.startsWith('/articles/')) {
     const id = pathname.replace('/articles/', '');
-    return { activeView: 'articles', selectedAnimalId: null, activeArticleId: id || null };
+    return { activeView: 'article-detail', selectedAnimalId: null, activeArticleId: id || null };
   }
   if (pathname === '/articles') {
     return { activeView: 'articles', selectedAnimalId: null, activeArticleId: null };
@@ -31,18 +32,25 @@ export default function App() {
   const { activeView, selectedAnimalId, activeArticleId } = routeState;
 
   const navigateTo = (view, animalId = null, articleId = null) => {
+    let targetView = view;
+    if (view === 'articles' && articleId) {
+      targetView = 'article-detail';
+    }
+
     setRouteState({
-      activeView: view,
+      activeView: targetView,
       selectedAnimalId: animalId,
       activeArticleId: articleId
     });
 
     let path = '/';
-    if (view === 'detail' && animalId) {
+    if (targetView === 'detail' && animalId) {
       path = `/animal/${animalId}`;
-    } else if (view === 'articles') {
-      path = articleId ? `/articles/${articleId}` : '/articles';
-    } else if (view === 'announcements') {
+    } else if (targetView === 'article-detail' && articleId) {
+      path = `/articles/${articleId}`;
+    } else if (targetView === 'articles') {
+      path = '/articles';
+    } else if (targetView === 'announcements') {
       path = '/announcements';
     }
 
@@ -70,7 +78,7 @@ export default function App() {
   };
 
   const handleNavigateArticle = (articleId) => {
-    navigateTo('articles', null, articleId);
+    navigateTo('article-detail', null, articleId);
   };
 
   const selectedAnimal = animalsData.find((a) => a.id === selectedAnimalId && a.status === 'published');
@@ -92,8 +100,14 @@ export default function App() {
         
         {activeView === 'articles' && (
           <ArticlesView 
-            activeArticleId={activeArticleId} 
-            onArticleSelect={(articleId) => navigateTo('articles', null, articleId)} 
+            onArticleSelect={(articleId) => navigateTo('article-detail', null, articleId)} 
+          />
+        )}
+
+        {activeView === 'article-detail' && (
+          <ArticleDetailView 
+            articleId={activeArticleId} 
+            onBack={() => navigateTo('articles', null, null)} 
           />
         )}
 
