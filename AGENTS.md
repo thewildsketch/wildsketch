@@ -39,6 +39,28 @@
 
 ---
 
+## 🧪 測試架構與分流規範 (Test Partitioning)
+
+測試套件依子系統物理隔離，禁止在局部任務中盲目全跑 `npm test`：
+
+### 1. 範疇與指令對照表
+
+| 異動範疇         | 測試目錄 (`tests/`) | 職責邊界                                                                     | 執行指令              |
+| :--------------- | :------------------ | :--------------------------------------------------------------------------- | :-------------------- |
+| **前台**         | `client/`           | 使用者端頁面（`views/`）、引擎（`hooks/`）與互動組件（`components/`）        | `npm run test:client` |
+| **共享資料層**   | `shared/`           | 資料集 Schema 驗證與跨端發佈過濾防線                                         | `npm run test:shared` |
+| **後台**         | `admin/`            | 管理端頁面、獨立路由（`routing/`）、狀態引擎（`hooks/`）與演算法（`utils/`） | `npm run test:admin`  |
+| **後端管線服務** | `server/`           | 後端 API 服務與資料倉儲持久化                                                | `npm run test:server` |
+| **全域整合驗收** | 全目錄              | 全專案所有測試套件（移交 Review / 發佈前）                                   | `npm run test`        |
+
+### 2. 單一 Focused 測試語法 (Single File Focused Run)
+
+```bash
+npx vitest run <target-test>
+```
+
+---
+
 ## 📂 OpenSpec 目錄架構
 
 ```text

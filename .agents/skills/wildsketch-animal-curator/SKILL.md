@@ -60,13 +60,13 @@ project: wildsketch
 1. **下載、壓縮與儲存原始參考照片**：
    * 於 Unsplash 等開源圖片平台下載最高解析度原圖，並將原圖下載網址記錄於 `sourceImage`，將 Unsplash 原圖頁面網址記錄於 `sourceUrl` 欄位，以利出處署名與素材重新下載。
    * 參考照片保留原始的長寬比例與畫面構圖（不強迫進行任何寬高比裁切與 AI 背景填充），僅需進行大小優化壓縮。
-   * **壓縮與儲存**：確認檔案大小**壓縮在 1MB 以下**，並將彩色 JPG 儲存至對應角度的子資料夾中，路徑格式為 `public/assets/animals/<animal_id>/<angle>/<angle>_ref_<hash值>.jpg`（例如 `public/assets/animals/cat/front/front_ref_5a1e2f.jpg`）。
+   * **壓縮與儲存**：確認檔案大小**壓縮在 1MB 以下**，並將彩色 JPG 儲存至對應角度的子資料夾中，路徑格式為 `public/assets/animals/<animal_id>/<angle>/<angle>_ref_<6位hex hash>.jpg`（例如 `public/assets/animals/cat/front/front_ref_5a1e2f.jpg`）。
 2. **產製對位骨骼透明 PNG**：
    * **分析動物姿態**：觀察參考照片中動物的實際朝向與姿勢，直接依此朝向與骨骼位置進行骨骼生成，保留照片的原始朝向與相貌（不需水平翻轉）。
    * **骨骼美術規格 (Pure Bones Recipe)**：疊加骨骼必須為炭筆素描風格之**純骨骼 (Pure Bones Only)** 圖像。畫面中僅包含骨頭線條，不包含半透明體表輪廓、不包含皮肉線條、不包含英文標記文字與任何指引線。
    * **去背與對位**：呼叫 `scripts/remove_background.py` 將生成骨架圖去背。將去背透明 PNG 以等比例進行縮放或位移，使其骨骼精確疊加覆蓋在相片中動物對應位置（禁止進行非剛性形變或扭曲）。
    * **畫布與壓縮一致性**：確保去背骨骼 PNG 的畫布大小與寬高像素，與對應的 `.jpg` 參考照片 **100% 完全一致**（禁止自動緊縮裁切邊緣透明區域），且檔案大小亦需**壓縮在 1MB 以下**。
-   * 儲存至與照片相同的子目錄中，路徑格式為 `public/assets/animals/<animal_id>/<angle>/<angle>_ref_<hash值>_skeleton.png`（例如 `public/assets/animals/cat/front/front_ref_5a1e2f_skeleton.png`）。
+   * 儲存至與照片相同的子目錄中，路徑格式為 `public/assets/animals/<animal_id>/<angle>/<angle>_ref_<6位hex hash>_skeleton.png`（例如 `public/assets/animals/cat/front/front_ref_5a1e2f_skeleton.png`）。
 3. **更新資料集 Schema 結構**：
    * 在對應的 `angles.<angle>.photos` 陣列中新增相片物件，將相對路徑填入 `url` 與 `skeleton` 欄位（對齊子資料夾格式，如 `"/assets/animals/cat/front/front_ref_5a1e2f.jpg"` 與 `"/assets/animals/cat/front/front_ref_5a1e2f_skeleton.png"`）。
    * 預設照片的 `status` 設為 `"draft"`。

@@ -67,7 +67,9 @@
 
 ### 測試豁免
 
-允許跳過 `npm test`。若評估微調仍有必要驗證，僅執行與改動直接相關的單一 focused 單元測試。
+允許跳過全域 `npm test`。
+- **原則**：直改純 CSS、色碼或靜態文字時免測。
+- **必要驗證時**：若評估 JSX 結構調整仍有必要驗證，**僅執行單一 Focused 測試（`npx vitest run <target-test>`）** 或對應範疇指令（`npm run test:client` / `npm run test:admin`），嚴禁全跑。
 
 ### 文件同步義務
 
