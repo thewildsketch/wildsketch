@@ -9,6 +9,10 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:client": "vitest run tests/client",
+    "test:admin": "vitest run tests/admin",
+    "test:server": "vitest run tests/server",
+    "test:shared": "vitest run tests/shared",
     "test:watch": "vitest"
   },
   "dependencies": {
