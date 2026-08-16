@@ -116,7 +116,7 @@ export default function LightboxToolbar({
                     <svg className="inline-help-svg" viewBox="0 0 24 24">
                       <path d="M3 7v6h6"/>
                       <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
-                    </svg>：復原此圖層至預設位置
+                    </svg>：復原此圖層的位移與縮放
                   </li>
                   <li>
                     <svg className="inline-help-svg" viewBox="0 0 24 24">
