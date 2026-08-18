@@ -12,7 +12,7 @@
   --color-accent-light: #F6ECE6;
   --color-scrim: rgba(30, 27, 24, 0.75);
 
-  --font-serif: "Playfair Display", Georgia, serif;
+  --font-serif: "Playfair Display", Georgia, "PingFang TC", "Hiragino Sans TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
   --font-sketch: "Kalam", cursive;
   --font-body: "Patrick Hand", cursive;
   --font-sans: "Inter", sans-serif;
