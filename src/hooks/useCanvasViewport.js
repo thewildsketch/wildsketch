@@ -201,16 +201,23 @@ export default function useCanvasViewport(options = {}) {
     }
   }, []);
 
-  // Lock body scroll and touch actions
+  // Lock html and body scroll and touch actions
   useEffect(() => {
-    const origOverflow = document.body.style.overflow;
-    const origTouchAction = document.body.style.touchAction;
+    const origBodyOverflow = document.body.style.overflow;
+    const origBodyTouchAction = document.body.style.touchAction;
+    const origHtmlOverflow = document.documentElement.style.overflow;
+    const origHtmlScrollbarGutter = document.documentElement.style.scrollbarGutter;
+
     document.body.style.overflow = 'hidden';
     document.body.style.touchAction = 'none';
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.scrollbarGutter = 'auto';
 
     return () => {
-      document.body.style.overflow = origOverflow;
-      document.body.style.touchAction = origTouchAction;
+      document.body.style.overflow = origBodyOverflow;
+      document.body.style.touchAction = origBodyTouchAction;
+      document.documentElement.style.overflow = origHtmlOverflow;
+      document.documentElement.style.scrollbarGutter = origHtmlScrollbarGutter;
     };
   }, []);
 

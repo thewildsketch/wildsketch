@@ -200,19 +200,25 @@ describe('useCanvasViewport Hook', () => {
   });
 
   describe('Body Scroll Locking', () => {
-    it('locks body scroll on mount and restores on unmount', () => {
+    it('locks body and html scroll on mount and restores on unmount', () => {
       document.body.style.overflow = 'auto';
       document.body.style.touchAction = 'auto';
+      document.documentElement.style.overflow = 'scroll';
+      document.documentElement.style.scrollbarGutter = 'stable';
 
       const { unmount } = renderHook(() => useCanvasViewport());
 
       expect(document.body.style.overflow).toBe('hidden');
       expect(document.body.style.touchAction).toBe('none');
+      expect(document.documentElement.style.overflow).toBe('hidden');
+      expect(document.documentElement.style.scrollbarGutter).toBe('auto');
 
       unmount();
 
       expect(document.body.style.overflow).toBe('auto');
       expect(document.body.style.touchAction).toBe('auto');
+      expect(document.documentElement.style.overflow).toBe('scroll');
+      expect(document.documentElement.style.scrollbarGutter).toBe('stable');
     });
   });
 
