@@ -1,4 +1,5 @@
 import React from 'react';
+import { SKELETON_DICTIONARY_DATA } from '../data/skeletonDictionary';
 
 export default function LightboxToolbar({
   isSkeletonBase = false,
@@ -7,6 +8,10 @@ export default function LightboxToolbar({
   onToggleHelp,
   showCoachMark,
   onDismissCoachMark,
+  showDict = false,
+  onToggleDict = () => {},
+  dictSearchText = '',
+  onDictSearchChange = () => {},
   onGlobalReset,
   currentScale,
   onZoomIn,
@@ -35,6 +40,12 @@ export default function LightboxToolbar({
 
   const isZoomInDisabled = isCurrentLayerHidden || currentScale >= 4.0;
   const isZoomOutDisabled = isCurrentLayerHidden || currentScale <= 0.2;
+
+  const filteredDictItems = SKELETON_DICTIONARY_DATA.filter((item) => {
+    const q = dictSearchText.trim().toLowerCase();
+    if (!q) return true;
+    return item.en.toLowerCase().includes(q) || item.zh.toLowerCase().includes(q);
+  });
 
   return (
     <div 
@@ -95,7 +106,14 @@ export default function LightboxToolbar({
             >
               &times;
             </button>
-            <h4>速寫室操作指南</h4>
+            <h4>
+              <svg className="inline-help-svg" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px' }}>
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>速寫室操作指南</span>
+            </h4>
             <ul>
               <li><strong>畫布操作</strong>：左鍵拖曳可平移，滾動滾輪可縮放。</li>
               <li><strong>圖層獨立調整</strong>：點擊
@@ -144,6 +162,93 @@ export default function LightboxToolbar({
                 </svg>一鍵還原所有圖層至初始狀態。
               </li>
             </ul>
+          </div>
+        </div>
+      )}
+
+      {/* 骨架專屬骨骼字典 Tooltip (僅在純骨架燈箱顯示) */}
+      {isSkeletonBase && (
+        <div className="v-toolbar-item" id="v-toolbar-dict-item" style={{ position: 'relative' }}>
+          <button 
+            className={`lightbox-circle-btn dict-trigger ${showDict ? 'active' : ''}`} 
+            id="lightbox-dict-btn" 
+            title="骨骼字典" 
+            aria-label="骨骼字典" 
+            onClick={onToggleDict}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              <path d="M6 8h3"></path>
+              <path d="M6 12h3"></path>
+              <path d="M15 8h3"></path>
+              <path d="M15 12h3"></path>
+            </svg>
+          </button>
+
+          <div 
+            className={`lightbox-dict-tooltip ${showDict ? 'show' : ''}`} 
+            id="lightbox-dict-tooltip"
+            data-testid="lightbox-dict-tooltip"
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+          >
+            <button 
+              className="tooltip-close-btn" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleDict(e);
+              }} 
+              aria-label="關閉字典"
+            >
+              &times;
+            </button>
+            <h4>
+              <svg className="inline-help-svg" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px' }}>
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                <path d="M6 8h3"></path>
+                <path d="M6 12h3"></path>
+                <path d="M15 8h3"></path>
+                <path d="M15 12h3"></path>
+              </svg>
+              <span>骨骼字典</span>
+            </h4>
+            <div className="dict-search-inner" style={{ margin: '0 0 7px', position: 'relative' }}>
+              <svg className="dict-search-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', width: '14px', height: '14px', stroke: 'var(--color-text-muted)' }}>
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input 
+                type="text" 
+                id="lightbox-dict-search-input" 
+                className="skeleton-dict-search-input" 
+                placeholder="請輸入英文或中文骨骼名稱" 
+                value={dictSearchText} 
+                onChange={(e) => onDictSearchChange(e.target.value)} 
+                style={{ padding: '6px 10px 6px 30px', width: '100%', fontSize: '0.82rem' }} 
+              />
+            </div>
+            <div className="lightbox-dict-scroll" onWheel={(e) => e.stopPropagation()}>
+              <table className="skeleton-dict-table">
+                <tbody id="lightbox-dict-tbody">
+                  {filteredDictItems.length === 0 ? (
+                    <tr>
+                      <td colSpan="3" className="dict-no-result">查無相符的骨骼部位，請嘗試其他關鍵字</td>
+                    </tr>
+                  ) : (
+                    filteredDictItems.map((item) => (
+                      <tr key={item.en}>
+                        <td className="dict-en-cell">{item.en}</td>
+                        <td className="dict-zh-cell">{item.zh}</td>
+                        <td className="dict-tip-cell">{item.tip}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

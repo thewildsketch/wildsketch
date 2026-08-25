@@ -22,7 +22,7 @@ describe('ReferenceStudio Component – Panel Labels & Angle Switching', () => {
     render(<ReferenceStudio angles={cat.angles} />);
 
     // Skeleton image should always render if skeleton path exists
-    const skeletonImg = screen.getByAltText('骨架解剖圖');
+    const skeletonImg = screen.getByAltText('骨架圖');
     expect(skeletonImg).toBeInTheDocument();
   });
 
@@ -102,7 +102,31 @@ describe('ReferenceStudio – SkeletonPanel contrast invert toggle', () => {
     // front angle has a skeleton
     fireEvent.click(screen.getByRole('button', { name: /正視角 Front view/ }));
 
-    const skeletonImg = screen.getByAltText('骨架解剖圖');
+    const skeletonImg = screen.getByAltText('骨架圖');
     expect(skeletonImg).toBeInTheDocument();
+  });
+
+  it('toggles compact skeleton dictionary strip and searches', () => {
+    const cat = animalsData.find(a => a.id === 'cat');
+    render(<ReferenceStudio angles={cat.angles} />);
+
+    const dictBtn = screen.getByRole('button', { name: '骨骼字典' });
+    expect(dictBtn).toBeInTheDocument();
+
+    // Click to open compact strip
+    fireEvent.click(dictBtn);
+    expect(screen.getByTestId('skeleton-compact-dict-strip')).toBeInTheDocument();
+    expect(screen.getByText('脊骨（脊椎）')).toBeInTheDocument();
+
+    // Search query
+    const input = screen.getByPlaceholderText('請輸入英文或中文骨骼名稱');
+    fireEvent.change(input, { target: { value: '頭骨' } });
+    expect(screen.getByText('Skull')).toBeInTheDocument();
+    expect(screen.getByText('頭骨')).toBeInTheDocument();
+    expect(screen.queryByText('脊骨（脊椎）')).not.toBeInTheDocument();
+
+    // Close strip
+    fireEvent.click(screen.getByRole('button', { name: '關閉' }));
+    expect(screen.queryByTestId('skeleton-compact-dict-strip')).not.toBeInTheDocument();
   });
 });

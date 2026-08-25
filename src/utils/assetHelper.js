@@ -24,3 +24,19 @@ export function getAssetUrl(path) {
   
   return `${cleanBase}${cleanPath}`;
 }
+
+/**
+ * Replaces all relative /assets/ paths inside HTML string with CDN base URL if configured.
+ * 
+ * @param {string} html - Raw HTML content
+ * @returns {string} Processed HTML with resolved CDN asset URLs
+ */
+export function resolveHtmlAssetUrls(html) {
+  if (!html || typeof html !== 'string') return html;
+  const baseUrl = import.meta.env.VITE_ASSET_BASE_URL || '';
+  if (!baseUrl) return html;
+
+  const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  return html.replace(/src=["'](\/assets\/[^"']+)["']/g, (_match, p1) => `src="${cleanBase}${p1}"`);
+}
+

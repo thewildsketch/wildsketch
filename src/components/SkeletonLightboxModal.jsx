@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageWithFallback from './common/ImageWithFallback';
 import LightboxToolbar from './LightboxToolbar';
 import useCanvasViewport from '../hooks/useCanvasViewport';
 
 export default function SkeletonLightboxModal({ imageUrl, onClose }) {
+  const [showDict, setShowDict] = useState(false);
+  const [dictSearchText, setDictSearchText] = useState('');
+
   const {
     viewportRef,
     isDragging,
@@ -23,6 +26,21 @@ export default function SkeletonLightboxModal({ imageUrl, onClose }) {
     return { ratio: '3 / 2', val: 1.5 };
   };
   const { ratio: aspectRatio, val: aspectRatioVal } = getAspectRatio();
+
+  // Escape key listener
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        if (showDict) {
+          setShowDict(false);
+        } else if (onClose) {
+          onClose();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showDict, onClose]);
 
   return (
     <div 
@@ -46,7 +64,7 @@ export default function SkeletonLightboxModal({ imageUrl, onClose }) {
         >
           <ImageWithFallback 
             src={imageUrl} 
-            alt="放大的骨骼圖" 
+            alt="放大的骨架圖" 
             className="lightbox-skeleton-overlay" 
             fallbackClassName="lightbox-skeleton-fallback"
             style={{ 
@@ -68,6 +86,10 @@ export default function SkeletonLightboxModal({ imageUrl, onClose }) {
         onToggleHelp={() => {}}
         showCoachMark={false}
         onDismissCoachMark={() => {}}
+        showDict={showDict}
+        onToggleDict={() => setShowDict((prev) => !prev)}
+        dictSearchText={dictSearchText}
+        onDictSearchChange={setDictSearchText}
         onGlobalReset={reset}
         currentScale={currentScale}
         onZoomIn={zoomIn}

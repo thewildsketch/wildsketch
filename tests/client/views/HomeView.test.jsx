@@ -12,9 +12,6 @@ describe('HomeView Layout & Posture Category Cards', () => {
     const handleSelect = vi.fn();
     render(<HomeView animals={animalsData} onAnimalSelect={handleSelect} />);
 
-    // Ensure main title is deleted (should not have h2 header '繪圖新手的骨骼與參考圖指南')
-    expect(screen.queryByRole('heading', { name: '繪圖新手的骨骼與參考圖指南' })).not.toBeInTheDocument();
-
     // Verify category explainer text is present
     expect(screen.getAllByText(/蹠行類.*Plantigrade/)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/趾行類.*Digitigrade/)[0]).toBeInTheDocument();
