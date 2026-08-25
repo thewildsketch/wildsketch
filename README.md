@@ -8,19 +8,19 @@ An artistic anatomy reference website for illustrators and drawing learners.
 Browse common mammals by walking posture — plantigrade, digitigrade, and unguligrade —
 with skeleton diagrams, multi-angle photos, and an interactive skeleton overlay tool.
 
-🌐 [thewildsketch.com](https://thewildsketch.com)
+> 🔗 [thewildsketch.com](https://thewildsketch.com)
 
 ---
 
 ## 收錄動物 Species
-
-> 持續新增中，歡迎透過 [意見回饋](https://forms.gle/T8M8wAvCmDeG35j1A) 許願你想看到的動物 🐾
 
 | 步態 Posture       | 動物 Animals                   |
 | ------------------ | ------------------------------ |
 | 蹠行類 Plantigrade | 棕熊 Brown Bear、松鼠 Squirrel |
 | 趾行類 Digitigrade | 貓 Cat、狗 Dog                 |
 | 蹄行類 Unguligrade | 馬 Horse、紅鹿 Red Deer        |
+
+> 持續新增中，歡迎透過 [意見回饋](https://forms.gle/T8M8wAvCmDeG35j1A) 許願你想看到的動物 🐾
 
 ---
 

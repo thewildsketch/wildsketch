@@ -4,7 +4,7 @@ export const animalsData = [
     sortOrder: 1,
     status: "published",
     createdAt: "2026-07-20T10:00:00Z",
-    updatedAt: "2026-08-10T12:06:42.946Z",
+    updatedAt: "2026-08-15T11:31:40.600Z",
     publishedAt: "2026-07-22T08:00:00Z",
     names: {
       zh: "貓",
@@ -32,7 +32,72 @@ export const animalsData = [
         profileUrl: "https://unsplash.com/@freddyfromcgn"
       }
     },
-    breeds: [],
+    breeds: [
+      {
+        id: "american-shorthair",
+        names: {
+          zh: "美國短毛貓",
+          en: "American Shorthair"
+        },
+        sizeCategory: "medium"
+      },
+      {
+        id: "british-shorthair",
+        names: {
+          zh: "英國短毛貓",
+          en: "British Shorthair"
+        },
+        sizeCategory: "medium"
+      },
+      {
+        id: "ragdoll",
+        names: {
+          zh: "布偶貓",
+          en: "Ragdoll"
+        },
+        sizeCategory: "large"
+      },
+      {
+        id: "maine-coon",
+        names: {
+          zh: "緬因貓",
+          en: "Maine Coon"
+        },
+        sizeCategory: "large"
+      },
+      {
+        id: "persian-cat",
+        names: {
+          zh: "波斯貓",
+          en: "Persian Cat"
+        },
+        sizeCategory: "medium"
+      },
+      {
+        id: "siamese-cat",
+        names: {
+          zh: "暹羅貓",
+          en: "Siamese Cat"
+        },
+        sizeCategory: "medium"
+      },
+      {
+        id: "abyssinian-cat",
+        names: {
+          zh: "阿比西尼亞貓",
+          en: "Abyssinian cat"
+        },
+        sizeCategory: "medium"
+      },
+      {
+        id: "bengal-cat",
+        names: {
+          zh: "孟加拉貓",
+          en: "Bengal Cat"
+        },
+        sizeCategory: "medium"
+      }
+    ],
     angles: {
       front: {
         skeleton: "/assets/animals/cat/front_skeleton.png",
@@ -52,7 +117,7 @@ export const animalsData = [
             createdAt: "2026-08-10T11:51:17.790Z",
             updatedAt: "2026-08-10T12:06:31.377Z",
             publishedAt: "2026-08-10T12:06:31.377Z",
-            breedId: ""
+            breedId: "siamese-cat"
           },
           {
             id: "cat_front_ref_1786362608858",
@@ -130,7 +195,7 @@ export const animalsData = [
             createdAt: "2026-08-10T11:57:02.512Z",
             updatedAt: "2026-08-10T12:06:39.893Z",
             publishedAt: "2026-08-10T12:06:39.893Z",
-            breedId: ""
+            breedId: "siamese-cat"
           },
           {
             id: "cat_threeQuarter_ref_1786362947068",
@@ -147,7 +212,7 @@ export const animalsData = [
             createdAt: "2026-08-10T11:55:47.069Z",
             updatedAt: "2026-08-10T12:06:41.427Z",
             publishedAt: "2026-08-10T12:06:41.427Z",
-            breedId: ""
+            breedId: "abyssinian-cat"
           }
         ]
       }
