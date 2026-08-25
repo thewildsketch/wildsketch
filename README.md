@@ -1,12 +1,8 @@
 # WildSketch 動物速寫室 🐿️🐕🦌
 
-一個為插畫師與繪畫學習者打造的動物藝用解剖網站。
-依步態分類常見哺乳動物，提供骨架圖與多角度參考照片，
-並支援骨架疊加顯示功能，讓速寫練習更直覺。
+一個為插畫師與繪畫學習者打造的動物藝用解剖參考網站。依步態分類常見哺乳動物，提供多角度骨架圖與參考照片，並支援照片與骨架疊加對照，讓速寫練習更直覺。
 
-An artistic anatomy reference website for illustrators and drawing learners.
-Browse common mammals by walking posture — plantigrade, digitigrade, and unguligrade —
-with skeleton diagrams, multi-angle photos, and an interactive skeleton overlay tool.
+An animal anatomy reference site for illustrators and drawing learners. Browse mammals by locomotion type (plantigrade, digitigrade, unguligrade) with multi-angle skeleton diagrams and reference photos, plus an interactive overlay tool to compare skeleton and photo side by side for more intuitive sketch practice.
 
 > 🔗 [thewildsketch.com](https://thewildsketch.com)
 
@@ -14,7 +10,7 @@ with skeleton diagrams, multi-angle photos, and an interactive skeleton overlay 
 
 ## 收錄動物 Species
 
-| 步態 Posture       | 動物 Animals                   |
+| 步態 Gait       | 動物 Animals                   |
 | ------------------ | ------------------------------ |
 | 蹠行類 Plantigrade | 棕熊 Brown Bear、松鼠 Squirrel |
 | 趾行類 Digitigrade | 貓 Cat、狗 Dog                 |
